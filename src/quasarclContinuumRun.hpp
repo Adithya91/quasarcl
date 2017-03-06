@@ -130,7 +130,6 @@ namespace quasarcl {
 		auto continuumsMatrix = spectrumsMatrix; // Jak wyżej.
 
 		calcCfunDcfun(*quasarclPtr, wavelengthsMatrix_original, dcontinuumsMatrix, continuumsMatrix, size, c_reglin_results, reglin_results);
-
 		// ________________________________________________________________________ //
 		// ___kopiowanie wyników na host___________________________________________ //
 		// ________________________________________________________________________ //

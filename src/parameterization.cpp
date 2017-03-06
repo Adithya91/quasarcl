@@ -20,7 +20,7 @@ SEXP cppParameterization(SEXP quasarclPtr_, SEXP spectrumsMatrix_, SEXP errorsMa
 	std::vector<cl_double2> continuumWindowsVector = Rcpp::as<std::vector<cl_double2>>(continuumWindowsVector_);
 	std::vector<cl_double2> feWindowsVector = Rcpp::as<std::vector<cl_double2>>(feWindowsVector_);
 	Rcpp::List spectralLines(spectralLinesList_);
-	double ampWavelength = Rcpp::as<double>(ampWavelength_);
+	cl_double ampWavelength = Rcpp::as<cl_double>(ampWavelength_);
 	Rcpp::List fitParameters(fitParametersList_);
 
 	
@@ -54,12 +54,12 @@ SEXP cppFitElement(SEXP quasarclPtr_, SEXP specLinesMatrix_,
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferSpecLines = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferSpecLinesCopy = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferContinuums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferWavelengths = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferErrors = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_WRITE, spectrumsNumber * sizeof(uint));
+	cl::Buffer bufferSpecLines = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferSpecLinesCopy = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferContinuums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferWavelengths = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferErrors = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_WRITE, spectrumsNumber * sizeof(cl_uint));
 	
 	cl::copy(queue, specLinesMatrix.begin(), specLinesMatrix.end(), bufferSpecLines);
 	cl::copy(queue, continuumsMatrix.begin(), continuumsMatrix.end(), bufferContinuums);
@@ -67,7 +67,7 @@ SEXP cppFitElement(SEXP quasarclPtr_, SEXP specLinesMatrix_,
 	cl::copy(queue, errorsMatrix.begin(), errorsMatrix.end(), bufferErrors);
 	cl::copy(queue, sizesVector.begin(), sizesVector.end(), bufferSizes);
 	
-	queue.enqueueCopyBuffer(bufferSpecLinesCopy, bufferSpecLines, 0, 0, N * sizeof(double));
+	queue.enqueueCopyBuffer(bufferSpecLinesCopy, bufferSpecLines, 0, 0, N * sizeof(cl_double));
 	
 	return quasarcl::fitElement(quasarclPtr, bufferSpecLines, bufferSpecLinesCopy,
 								bufferContinuums, bufferWavelengths, wavelengthsMatrix,

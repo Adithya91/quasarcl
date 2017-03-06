@@ -23,13 +23,13 @@ rContinuum <- function(quasarcl, spectrumsMatrix, wavelengthsMatrix, errorsMatri
 	{
 		stop("Invalid spectrums sizes vector length")
 	}
-	if (is.null(windowsVector)) 
+	if (is.null(windows)) 
 	{
 		windows <- loadDefaultContinuumWindows()
 	}
 	if (is.null(ampWavelength)) 
 	{
-		ampWavelength <- defaultAmpWavelength
+		ampWavelength <- DEFAULT_AMP_WAVELENGTH
 	}
 	return (cppContinuum(quasarcl, spectrumsMatrix, wavelengthsMatrix, errorsMatrix, sizesVector, 
 						 windows, ampWavelength))
@@ -54,51 +54,37 @@ rFixReglinResults <- function(quasarcl, cReglinResultsVector, reglinResultsVecto
 
 
 #' @export
-rCalcCfunDcfun <- function(quasarcl, wavelengthsMatrix, dcontinuumsMatrix, continuumsMatrix, 
-						   cReglinResultsVector, reglinResultsVector) 
-						   {
-	if(!isInitialized(quasarcl)) 
-	{
-		stop("QuasarCL is not initialized!")
-	}
-	if(!identical(dim(wavelenghtsMatrix), dim(dcontinuumsMatrix))) 
-	{
-		stop("Matrices with different dimensions")
-	}
-	if(!identical(dim(wavelenghtsMatrix), dim(continuumsMatrix))) 
-	{
-		stop("Matrices with different dimensions")
-	}
-	if(!identical(nrow(wavelenghtsMatrix), length(cReglinResultsVector))) 
-	{
-		stop("Invalid continuum reglin results vector length")
-	}
-	if(!identical(nrow(wavelenghtsMatrix), length(reglinResultsVector))) 
-	{
-		stop("Invalid dcontinuum reglin results vector length")
-	}
-	return (cppCalcCfunDcfun(quasarcl, wavelengthsMatrix, dcontinuumsMatrix, continuumsMatrix, 
-							 cReglinResultsVector, reglinResultsVector))
-}
-
-
-
-#' @export
-rCalcCw <- function(quasarcl,  wavelengthsMatrix, continuumsMatrix, cReglinResultsVector) 
+rCalcCfunDcfun <- function(quasarcl, wavelengthsMatrix, cReglinResultsVector, reglinResultsVector) 
 {
 	if(!isInitialized(quasarcl)) 
 	{
 		stop("QuasarCL is not initialized!")
 	}
-	if(!identical(dim(wavelenghtsMatrix), dim(continuumsMatrix))) 
-	{
-		stop("Matrices with different dimensions")
-	}
-	if(!identical(nrow(wavelenghtsMatrix), length(cReglinResultsVector))) 
+	if(!identical(nrow(wavelengthsMatrix), length(cReglinResultsVector))) 
 	{
 		stop("Invalid continuum reglin results vector length")
 	}
-	return (cppCalcCw(quasarcl, wavelengthsMatrix, continuumsMatrix, cReglinResultsVector))
+	if(!identical(nrow(wavelengthsMatrix), length(reglinResultsVector))) 
+	{
+		stop("Invalid dcontinuum reglin results vector length")
+	}
+	return (cppCalcCfunDcfun(quasarcl, wavelengthsMatrix, cReglinResultsVector, reglinResultsVector))
+}
+
+
+
+#' @export
+rCalcCw <- function(quasarcl, wavelengthsMatrix, cReglinResultsVector) 
+{
+	if(!isInitialized(quasarcl)) 
+	{
+		stop("QuasarCL is not initialized!")
+	}
+	if(!identical(nrow(wavelengthsMatrix), length(cReglinResultsVector))) 
+	{
+		stop("Invalid continuum reglin results vector length")
+	}
+	return (cppCalcCw(quasarcl, wavelengthsMatrix, cReglinResultsVector))
 }
 
 

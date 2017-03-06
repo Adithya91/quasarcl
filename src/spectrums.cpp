@@ -16,14 +16,14 @@ SEXP cppGenerateWavelengthsMatrix(SEXP quasarclPtr_, SEXP abzVector_, SEXP spect
 	auto queue = quasarclPtr->getQueue();
 	
 	cl::Buffer bufferAbz = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(cl_double4));
-	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
+	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
 
 	cl::copy(queue, abzVector.begin(), abzVector.end(), bufferAbz);
-	
+		
 	quasarcl::generateWavelengthsMatrix(*quasarclPtr, bufferAbz, spectrumsNumber, bufferOutput); 
 	
 	Rcpp::NumericMatrix outputMatrix(spectrumsSize, spectrumsNumber);
-	cl::copy(queue, bufferOutput, outputMatrix.begin(), outputMatrix.end());
+	cl::copy(queue, bufferOutput, outputMatrix.begin(), outputMatrix.end());	
 	return outputMatrix;
 }
 
@@ -46,12 +46,12 @@ SEXP cppAddSpectrum(SEXP quasarclPtr_, SEXP wavelengthsMatrix_, SEXP spectrumsMa
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferWavelengths = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferSpectrums = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(uint));
-	cl::Buffer bufferToAddWavelenghts = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(double));
-	cl::Buffer bufferToAddSpectrum = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(double));
-	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
+	cl::Buffer bufferWavelengths = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferSpectrums = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(cl_uint));
+	cl::Buffer bufferToAddWavelenghts = cl::Buffer(context, CL_MEM_READ_ONLY, toAddWavelengthsVector.size() * sizeof(cl_double));
+	cl::Buffer bufferToAddSpectrum = cl::Buffer(context, CL_MEM_READ_ONLY, toAddSpectrumVector.size() * sizeof(cl_double));
+	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
 	
 	cl::copy(queue, wavelengthsMatrix.begin(), wavelengthsMatrix.end(), bufferWavelengths);
 	cl::copy(queue, spectrumsMatrix.begin(), spectrumsMatrix.end(), bufferSpectrums);
@@ -59,10 +59,10 @@ SEXP cppAddSpectrum(SEXP quasarclPtr_, SEXP wavelengthsMatrix_, SEXP spectrumsMa
 	cl::copy(queue, toAddWavelengthsVector.begin(), toAddWavelengthsVector.end(), bufferToAddWavelenghts);
 	cl::copy(queue, toAddSpectrumVector.begin(), toAddSpectrumVector.end(), bufferToAddSpectrum);
 	
-	quasarcl::addSpectrum(*quasarclPtr, bufferWavelengths, bufferSpectrums, bufferSizes, spectrumsNumber, bufferToAddWavelenghts, bufferToAddSpectrum, spectrumsSize, bufferOutput); 
-	
-	Rcpp::NumericMatrix outputMatrix(spectrumsNumber, spectrumsSize);
-	cl::copy(queue, bufferOutput, outputMatrix.begin(), outputMatrix.end());
+	quasarcl::addSpectrum(*quasarclPtr, bufferSpectrums, bufferWavelengths, bufferSizes, spectrumsNumber, bufferToAddWavelenghts, bufferToAddSpectrum, spectrumsSize, bufferOutput); 
+
+	Rcpp::NumericMatrix outputMatrix(spectrumsNumber, spectrumsSize);	
+	cl::copy(queue, bufferOutput, outputMatrix.begin(), outputMatrix.end());	
 	return outputMatrix;
 }
 
@@ -86,10 +86,10 @@ SEXP cppFilterWithWavelengthWindows(SEXP quasarclPtr_, SEXP spectrumsMatrix_, SE
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferSpectrums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferWavelengths = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferErrors = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(uint));
+	cl::Buffer bufferSpectrums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferWavelengths = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferErrors = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(cl_uint));
 	cl::Buffer bufferWindows = cl::Buffer(context, CL_MEM_READ_ONLY, windowsNumber * sizeof(cl_double2));
 	
 	cl::copy(queue, wavelengthsMatrix.begin(), wavelengthsMatrix.end(), bufferWavelengths);
@@ -131,16 +131,16 @@ SEXP cppFilterNonpositive(SEXP quasarclPtr_, SEXP spectrumsMatrix_, SEXP aMatrix
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferSpectrums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferA = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferB = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
+	cl::Buffer bufferSpectrums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferA = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferB = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
 	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(size_t));
 	
 	cl::copy(queue, spectrumsMatrix.begin(), spectrumsMatrix.end(), bufferSpectrums);
 	cl::copy(queue, aMatrix.begin(), aMatrix.end(), bufferA);
 	cl::copy(queue, bMatrix.begin(), bMatrix.end(), bufferB);
 	cl::copy(queue, sizesVector.begin(), sizesVector.end(), bufferSizes);
-	
+		
 	quasarcl::filterNonpositive(*quasarclPtr, bufferSpectrums, bufferA, bufferB, bufferSizes, spectrumsNumber); 
 	
 	Rcpp::NumericMatrix outputSpectrumsMatrix(spectrumsNumber, spectrumsSize);
@@ -150,7 +150,7 @@ SEXP cppFilterNonpositive(SEXP quasarclPtr_, SEXP spectrumsMatrix_, SEXP aMatrix
 	cl::copy(queue, bufferSpectrums, outputSpectrumsMatrix.begin(), outputSpectrumsMatrix.end());
 	cl::copy(queue, bufferA, outputAMatrix.begin(), outputAMatrix.end());
 	cl::copy(queue, bufferB, outputBMatrix.begin(), outputBMatrix.end());
-	
+		
 	return Rcpp::List::create(Rcpp::Named("spectrumsMatrix") = outputSpectrumsMatrix,
 							  Rcpp::Named("aMatrix") = outputAMatrix,
 							  Rcpp::Named("bMatrix") = outputBMatrix);
@@ -174,16 +174,16 @@ SEXP cppFilterZeros(SEXP quasarclPtr_, SEXP spectrumsMatrix_, SEXP aMatrix_, SEX
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferSpectrums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferA = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferB = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(uint));
+	cl::Buffer bufferSpectrums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferA = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferB = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(cl_uint));
 	
 	cl::copy(queue, spectrumsMatrix.begin(), spectrumsMatrix.end(), bufferSpectrums);
 	cl::copy(queue, aMatrix.begin(), aMatrix.end(), bufferA);
 	cl::copy(queue, bMatrix.begin(), bMatrix.end(), bufferB);
 	cl::copy(queue, sizesVector.begin(), sizesVector.end(), bufferSizes);
-	
+		
 	quasarcl::filterZeros(*quasarclPtr, bufferSpectrums, bufferA, bufferB, bufferSizes, spectrumsNumber);
 	
 	Rcpp::NumericMatrix outputSpectrumsMatrix(spectrumsNumber, spectrumsSize);
@@ -193,7 +193,7 @@ SEXP cppFilterZeros(SEXP quasarclPtr_, SEXP spectrumsMatrix_, SEXP aMatrix_, SEX
 	cl::copy(queue, bufferSpectrums, outputSpectrumsMatrix.begin(), outputSpectrumsMatrix.end());
 	cl::copy(queue, bufferA, outputAMatrix.begin(), outputAMatrix.end());
 	cl::copy(queue, bufferB, outputBMatrix.begin(), outputBMatrix.end());
-	
+		
 	return Rcpp::List::create(Rcpp::Named("spectrumsMatrix") = outputSpectrumsMatrix,
 							  Rcpp::Named("aMatrix") = outputAMatrix,
 							  Rcpp::Named("bMatrix") = outputBMatrix);
@@ -217,16 +217,16 @@ SEXP cppFilterInfs(SEXP quasarclPtr_, SEXP spectrumsMatrix_, SEXP aMatrix_, SEXP
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferSpectrums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferA = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferB = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(uint));
+	cl::Buffer bufferSpectrums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferA = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferB = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(cl_uint));
 	
 	cl::copy(queue, spectrumsMatrix.begin(), spectrumsMatrix.end(), bufferSpectrums);
 	cl::copy(queue, aMatrix.begin(), aMatrix.end(), bufferA);
 	cl::copy(queue, bMatrix.begin(), bMatrix.end(), bufferB);
 	cl::copy(queue, sizesVector.begin(), sizesVector.end(), bufferSizes);
-			
+	
 	quasarcl::filterInfs(*quasarclPtr, bufferSpectrums, bufferA, bufferB, bufferSizes, spectrumsNumber); 
 	
 	Rcpp::NumericMatrix outputSpectrumsMatrix(spectrumsNumber, spectrumsSize);

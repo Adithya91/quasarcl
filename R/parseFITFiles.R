@@ -44,9 +44,7 @@ parseData <- function(fitFile)
 parseError <- function(fitFile) 
 {
 	error <- fitFile$imDat[,3]
-	#error = error * 1.0e-17;
-	print(error)
-	print(class(error))
+	error <- error * 1.0e-17;
 	return (error)
 }
 

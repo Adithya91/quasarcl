@@ -78,7 +78,7 @@ rFitElement <- function(quasarcl, specLinesMatrix, continuumsMatrix, wavelengths
 
 
 #' @export
-rFitGaussian <- function(quasarcl, yMatrix, xMatrix, sizesVector) 
+rFitGaussian <- function(quasarcl, yMatrix, xMatrix, sizesVector, resultsVector) 
 {
 	if(!isInitialized(quasarcl))
 	{
@@ -90,9 +90,13 @@ rFitGaussian <- function(quasarcl, yMatrix, xMatrix, sizesVector)
 	}
 	if(!identical(nrow(yMatrix), length(sizesVector))) 
 	{
-		stop("Matrices with different dimensions")
+		stop("Invalid spectrums sizes vector length")
 	}
-	return (cppFitGaussian(quasarcl, yMatrix, xMatrix, sizesVector))
+	if(!identical(nrow(yMatrix), length(resultsVector))) 
+	{
+		stop("Invalid results vector length")
+	}
+	return (cppFitGaussian(quasarcl, yMatrix, xMatrix, sizesVector, resultsVector))
 }
 
 

@@ -95,32 +95,29 @@ BEGIN_RCPP
 END_RCPP
 }
 // cppCalcCfunDcfun
-SEXP cppCalcCfunDcfun(SEXP quasarclPtr_, SEXP wavelengthsMatrix_, SEXP dcontinuumsMatrix_, SEXP continuumsMatrix_, SEXP cReglinResultsVector_, SEXP reglinResultsVector_);
-RcppExport SEXP quasar_cppCalcCfunDcfun(SEXP quasarclPtr_SEXP, SEXP wavelengthsMatrix_SEXP, SEXP dcontinuumsMatrix_SEXP, SEXP continuumsMatrix_SEXP, SEXP cReglinResultsVector_SEXP, SEXP reglinResultsVector_SEXP) {
+SEXP cppCalcCfunDcfun(SEXP quasarclPtr_, SEXP wavelengthsMatrix_, SEXP cReglinResultsVector_, SEXP reglinResultsVector_);
+RcppExport SEXP quasar_cppCalcCfunDcfun(SEXP quasarclPtr_SEXP, SEXP wavelengthsMatrix_SEXP, SEXP cReglinResultsVector_SEXP, SEXP reglinResultsVector_SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type quasarclPtr_(quasarclPtr_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type wavelengthsMatrix_(wavelengthsMatrix_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type dcontinuumsMatrix_(dcontinuumsMatrix_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type continuumsMatrix_(continuumsMatrix_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type cReglinResultsVector_(cReglinResultsVector_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type reglinResultsVector_(reglinResultsVector_SEXP);
-    rcpp_result_gen = Rcpp::wrap(cppCalcCfunDcfun(quasarclPtr_, wavelengthsMatrix_, dcontinuumsMatrix_, continuumsMatrix_, cReglinResultsVector_, reglinResultsVector_));
+    rcpp_result_gen = Rcpp::wrap(cppCalcCfunDcfun(quasarclPtr_, wavelengthsMatrix_, cReglinResultsVector_, reglinResultsVector_));
     return rcpp_result_gen;
 END_RCPP
 }
 // cppCalcCw
-SEXP cppCalcCw(SEXP quasarclPtr_, SEXP wavelengthsMatrix_, SEXP continuumsMatrix_, SEXP cReglinResultsVector_);
-RcppExport SEXP quasar_cppCalcCw(SEXP quasarclPtr_SEXP, SEXP wavelengthsMatrix_SEXP, SEXP continuumsMatrix_SEXP, SEXP cReglinResultsVector_SEXP) {
+SEXP cppCalcCw(SEXP quasarclPtr_, SEXP wavelengthsMatrix_, SEXP cReglinResultsVector_);
+RcppExport SEXP quasar_cppCalcCw(SEXP quasarclPtr_SEXP, SEXP wavelengthsMatrix_SEXP, SEXP cReglinResultsVector_SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type quasarclPtr_(quasarclPtr_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type wavelengthsMatrix_(wavelengthsMatrix_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type continuumsMatrix_(continuumsMatrix_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type cReglinResultsVector_(cReglinResultsVector_SEXP);
-    rcpp_result_gen = Rcpp::wrap(cppCalcCw(quasarclPtr_, wavelengthsMatrix_, continuumsMatrix_, cReglinResultsVector_));
+    rcpp_result_gen = Rcpp::wrap(cppCalcCw(quasarclPtr_, wavelengthsMatrix_, cReglinResultsVector_));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -155,21 +152,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // cppFeFit
-SEXP cppFeFit(SEXP quasarclPtr_, SEXP spectrumsMatrix_, SEXP wavelengthsMatrix_, SEXP errorsMatrix_, SEXP continuumsMatrix_, SEXP sizesVector_, SEXP feTemplateList_, SEXP windowsVector_, SEXP fitParametersList_);
-RcppExport SEXP quasar_cppFeFit(SEXP quasarclPtr_SEXP, SEXP spectrumsMatrix_SEXP, SEXP wavelengthsMatrix_SEXP, SEXP errorsMatrix_SEXP, SEXP continuumsMatrix_SEXP, SEXP sizesVector_SEXP, SEXP feTemplateList_SEXP, SEXP windowsVector_SEXP, SEXP fitParametersList_SEXP) {
+SEXP cppFeFit(SEXP quasarclPtr_, SEXP specDataList_, SEXP feTemplateList_, SEXP windowsVector_, SEXP fitParametersList_);
+RcppExport SEXP quasar_cppFeFit(SEXP quasarclPtr_SEXP, SEXP specDataList_SEXP, SEXP feTemplateList_SEXP, SEXP windowsVector_SEXP, SEXP fitParametersList_SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type quasarclPtr_(quasarclPtr_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type spectrumsMatrix_(spectrumsMatrix_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type wavelengthsMatrix_(wavelengthsMatrix_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type errorsMatrix_(errorsMatrix_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type continuumsMatrix_(continuumsMatrix_SEXP);
-    Rcpp::traits::input_parameter< SEXP >::type sizesVector_(sizesVector_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type specDataList_(specDataList_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type feTemplateList_(feTemplateList_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type windowsVector_(windowsVector_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type fitParametersList_(fitParametersList_SEXP);
-    rcpp_result_gen = Rcpp::wrap(cppFeFit(quasarclPtr_, spectrumsMatrix_, wavelengthsMatrix_, errorsMatrix_, continuumsMatrix_, sizesVector_, feTemplateList_, windowsVector_, fitParametersList_));
+    rcpp_result_gen = Rcpp::wrap(cppFeFit(quasarclPtr_, specDataList_, feTemplateList_, windowsVector_, fitParametersList_));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -232,22 +225,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// cppReduceFeChisq
-SEXP cppReduceFeChisq(SEXP quasarclPtr_, SEXP chisqsVector_, SEXP sizesVector_);
-RcppExport SEXP quasar_cppReduceFeChisq(SEXP quasarclPtr_SEXP, SEXP chisqsVector_SEXP, SEXP sizesVector_SEXP) {
+// cppReduceFeChisqs
+SEXP cppReduceFeChisqs(SEXP quasarclPtr_, SEXP chisqsVector_, SEXP sizesVector_);
+RcppExport SEXP quasar_cppReduceFeChisqs(SEXP quasarclPtr_SEXP, SEXP chisqsVector_SEXP, SEXP sizesVector_SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type quasarclPtr_(quasarclPtr_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type chisqsVector_(chisqsVector_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type sizesVector_(sizesVector_SEXP);
-    rcpp_result_gen = Rcpp::wrap(cppReduceFeChisq(quasarclPtr_, chisqsVector_, sizesVector_));
+    rcpp_result_gen = Rcpp::wrap(cppReduceFeChisqs(quasarclPtr_, chisqsVector_, sizesVector_));
     return rcpp_result_gen;
 END_RCPP
 }
 // cppFitGaussian
-SEXP cppFitGaussian(SEXP quasarclPtr_, SEXP yMatrix_, SEXP xMatrix_, SEXP sizesVector_);
-RcppExport SEXP quasar_cppFitGaussian(SEXP quasarclPtr_SEXP, SEXP yMatrix_SEXP, SEXP xMatrix_SEXP, SEXP sizesVector_SEXP) {
+SEXP cppFitGaussian(SEXP quasarclPtr_, SEXP yMatrix_, SEXP xMatrix_, SEXP sizesVector_, SEXP resultsVector_);
+RcppExport SEXP quasar_cppFitGaussian(SEXP quasarclPtr_SEXP, SEXP yMatrix_SEXP, SEXP xMatrix_SEXP, SEXP sizesVector_SEXP, SEXP resultsVector_SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -255,7 +248,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< SEXP >::type yMatrix_(yMatrix_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type xMatrix_(xMatrix_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type sizesVector_(sizesVector_SEXP);
-    rcpp_result_gen = Rcpp::wrap(cppFitGaussian(quasarclPtr_, yMatrix_, xMatrix_, sizesVector_));
+    Rcpp::traits::input_parameter< SEXP >::type resultsVector_(resultsVector_SEXP);
+    rcpp_result_gen = Rcpp::wrap(cppFitGaussian(quasarclPtr_, yMatrix_, xMatrix_, sizesVector_, resultsVector_));
     return rcpp_result_gen;
 END_RCPP
 }

@@ -37,6 +37,7 @@ namespace quasarcl {
 				cl::NullRange,
 				global,
 				cl::NullRange);
+		queue.finish();
 	}
 
 
@@ -68,6 +69,7 @@ namespace quasarcl {
 				cl::NullRange,
 				global,
 				local);
+		queue.finish();
 	}
 
 	
@@ -100,6 +102,7 @@ namespace quasarcl {
 				cl::NullRange,
 				global,
 				local);
+		queue.finish();
 	}
 
 
@@ -127,6 +130,7 @@ namespace quasarcl {
 				cl::NullRange,
 				global,
 				local);
+		queue.finish();
 	}
 
 }

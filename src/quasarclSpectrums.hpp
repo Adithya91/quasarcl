@@ -1,6 +1,9 @@
 #ifndef QUASARCL_SPECTRUMS_H_
 #define QUASARCL_SPECTRUMS_H_
 
+#ifndef __CL_ENABLE_EXCEPTIONS
+#define __CL_ENABLE_EXCEPTIONS
+#endif
 
 #include "QuasarCL.hpp"
 
@@ -27,6 +30,7 @@ namespace quasarcl {
 				cl::NullRange,
 				global,
 				local);
+		queue.finish();
 	}
 
 	
@@ -35,6 +39,9 @@ namespace quasarcl {
 					 cl::Buffer& toAddWavelengths, cl::Buffer& toAddSpectrum, const size_t toAddSize, cl::Buffer& outputSpectrumsMatrix)
 	{
 		cl::Kernel addSpectrumKernel = quasarcl.getKernelByName("addSpectrum");
+		
+		cl::CommandQueue queue = quasarcl.getQueue();
+		cl::Device device = queue.getInfo<CL_QUEUE_DEVICE>();
 		
 		unsigned int arg = 0;
 		addSpectrumKernel.setArg(arg++, sizeof(cl_double *), &wavelengthsMatrix);
@@ -46,8 +53,7 @@ namespace quasarcl {
 		addSpectrumKernel.setArg(arg++, static_cast<cl_uint>(toAddSize));
 		addSpectrumKernel.setArg(arg++, sizeof(cl_double *), &outputSpectrumsMatrix);
 
-		cl::CommandQueue queue = quasarcl.getQueue();
-		cl::Device device = queue.getInfo<CL_QUEUE_DEVICE>();
+		
 		
 		size_t maxWorkGroupSize = device.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
 		size_t globalSize = calcGlobalSize(maxWorkGroupSize, size);
@@ -60,6 +66,7 @@ namespace quasarcl {
 				cl::NullRange,
 				global,
 				local);
+		queue.finish();
 	}
 
 
@@ -88,6 +95,7 @@ namespace quasarcl {
 				cl::NullRange,
 				global,
 				local);
+		queue.finish();
 	}
 
 	
@@ -114,6 +122,7 @@ namespace quasarcl {
 				cl::NullRange,
 				global,
 				local);
+		queue.finish();
 	}
 
 
@@ -140,6 +149,7 @@ namespace quasarcl {
 				cl::NullRange,
 				global,
 				local);
+		queue.finish();
 	}
 
 
@@ -166,6 +176,7 @@ namespace quasarcl {
 				cl::NullRange,
 				global,
 				local);
+		queue.finish();
 	}
 
 
@@ -192,6 +203,7 @@ namespace quasarcl {
 				cl::NullRange,
 				global,
 				local);
+		queue.finish();
 	}
 
 }

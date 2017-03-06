@@ -47,14 +47,14 @@ loadWindows <-function(file)
 
 
 #' @export
-loadQuasarFileList <- function(path) 
+loadQuasarsFromFitFiles <- function(path) 
 {
 	fitFiles <- list.files(path=path, pattern="\\.fit$", full.names = TRUE)
 	if (identical(fitFiles, character(0))) 
 	{
 		stop("No .fit files found")
 	}
-	return (fitFiles)
+	return (lapply(fitFiles, parseFitFile))
 }
 
 
@@ -92,8 +92,6 @@ getSizesVector <-function(quasars)
 getAbzParams <- function(quasars) 
 {
 	abz <- lapply(getParams(quasars), function(param) { c(param$a, param$b, param$z, 0)})
-	print(class(abz))
-	print(abz)
 	return(abz)
 }
 

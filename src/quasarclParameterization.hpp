@@ -156,9 +156,7 @@ namespace quasarcl {
 		// __bufory ze danymi______________________________________________________ //
 		// ________________________________________________________________________ //
 
-		//Rcpp::NumericMatrix spectrumsMatrixHost(ASTRO_OBJ_SPEC_SIZE * size);
 		Rcpp::NumericMatrix wavelengthsMatrixHost(size, ASTRO_OBJ_SPEC_SIZE);
-		//Rcpp::NumericMatrix errorsMatrixHost(ASTRO_OBJ_SPEC_SIZE * size);
 		Rcpp::NumericMatrix continuumsMatrixHost(size, ASTRO_OBJ_SPEC_SIZE);
 		Rcpp::NumericMatrix dcontinuumsMatrixHost(size, ASTRO_OBJ_SPEC_SIZE);
 		Rcpp::NumericMatrix feTemplatesMatrixHost(size, ASTRO_OBJ_SPEC_SIZE);
@@ -247,7 +245,6 @@ namespace quasarcl {
 
 			cl::copy(queue, continuumsMatrix, continuumsMatrixHost.begin(), continuumsMatrixHost.end());
 			
-			//print(continuumsMatrixHost, continuumsMatrixHost.cols()*continuumsMatrixHost.rows());
 			// Błędy kontinuum NIE są UŻYWANE
 			//
 			// Jeżeli ostatnia pętla to trzeba zapisać błędy kontinuum na host
@@ -274,11 +271,17 @@ namespace quasarcl {
 			// ________________________________________________________________________ //
 
 
-			Data specData = {
+			/*Data specData = {
 				spectrumsMatrixHost, wavelengthsMatrixHost,
 				errorsMatrixHost, continuumsMatrixHost, sizesHost
-			};
+			};*/
 
+			Rcpp::List specData = Rcpp::List::create(Named("spectrumsMatrix") = spectrumsMatrixHost,
+													 Named("wavelengthsMatrix") = wavelengthsMatrixHost,
+													 Named("errorsMatrix") = errorsMatrixHost,
+													 Named("continuumsMatrix") = continuumsMatrixHost,
+													 Named("sizes") = sizesHost);
+			
 			Buffers specBuffers = {
 					spectrumsMatrix, wavelengthsMatrix,
 					errorsMatrix, continuumsMatrix, sizes

@@ -14,13 +14,13 @@ SEXP cppLog10(SEXP quasarclPtr_, SEXP inputMatrix_)
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferInput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
+	cl::Buffer bufferInput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
 	cl::copy(queue, inputMatrix.begin(), inputMatrix.end(), bufferInput);
 	
 	quasarcl::log10(*quasarclPtr, bufferInput, height, width);
 	
 	Rcpp::NumericMatrix outputMatrix(height, width);
-	cl::copy(queue, bufferInput, outputMatrix.begin(), outputMatrix.end());
+	cl::copy(queue, bufferInput, outputMatrix.begin(), outputMatrix.end());	
 	return outputMatrix;
 }
 
@@ -39,17 +39,17 @@ SEXP cppMinusMatrix(SEXP quasarclPtr_, SEXP inputMatrix_, SEXP subtrahendMatrix_
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferInput = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferSubtrahend = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
+	cl::Buffer bufferInput = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferSubtrahend = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
 	
 	cl::copy(queue, inputMatrix.begin(), inputMatrix.end(), bufferInput);
 	cl::copy(queue, subtrahendMatrix.begin(), subtrahendMatrix.end(), bufferSubtrahend);
-	
+		
 	quasarcl::minus(*quasarclPtr, bufferInput, height, width, bufferSubtrahend, bufferOutput);
 	
 	Rcpp::NumericMatrix outputMatrix(height, width);
-	cl::copy(queue, bufferOutput, outputMatrix.begin(), outputMatrix.end());
+	cl::copy(queue, bufferOutput, outputMatrix.begin(), outputMatrix.end());	
 	return outputMatrix;
 }
 
@@ -59,23 +59,23 @@ SEXP cppMinusScalar(SEXP quasarclPtr_, SEXP inputMatrix_, SEXP scalar_) {
 
 	Rcpp::XPtr<quasarcl::QuasarCL> quasarclPtr(quasarclPtr_);
 	Rcpp::NumericMatrix inputMatrix(inputMatrix_);
-	double scalar = Rcpp::as<double>(scalar_);
+	cl_double scalar = Rcpp::as<cl_double>(scalar_);
 	
 	const size_t width = inputMatrix.cols();   //długość widma
 	const size_t height = inputMatrix.rows();  //liczba kwazarów
 	const size_t N = width * height;
 	
-	
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferInput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
+	cl::Buffer bufferInput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
 	cl::copy(queue, inputMatrix.begin(), inputMatrix.end(), bufferInput);
+	
 	
 	quasarcl::minus(*quasarclPtr, bufferInput, height, width, scalar);
 		
 	Rcpp::NumericMatrix outputMatrix = Rcpp::NumericMatrix(height, width);
-	cl::copy(queue, bufferInput, outputMatrix.begin(), outputMatrix.end());
+	cl::copy(queue, bufferInput, outputMatrix.begin(), outputMatrix.end());	
 	return outputMatrix;
 }
 
@@ -95,9 +95,9 @@ SEXP cppMultiplyCol(SEXP quasarclPtr_, SEXP inputMatrix_, SEXP vector_)
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferInput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferVector = cl::Buffer(context, CL_MEM_READ_ONLY, M * sizeof(double));
-	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
+	cl::Buffer bufferInput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferVector = cl::Buffer(context, CL_MEM_READ_ONLY, M * sizeof(cl_double));
+	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
 	
 	cl::copy(queue, inputMatrix.begin(), inputMatrix.end(), bufferInput);
 	cl::copy(queue, vector.begin(), vector.end(), bufferVector);
@@ -105,7 +105,7 @@ SEXP cppMultiplyCol(SEXP quasarclPtr_, SEXP inputMatrix_, SEXP vector_)
 	quasarcl::multiplyCol(*quasarclPtr, bufferInput, height, width, bufferVector, bufferOutput);
 	
 	Rcpp::NumericMatrix outputMatrix(height, width);
-	cl::copy(queue, bufferOutput, outputMatrix.begin(), outputMatrix.end());
+	cl::copy(queue, bufferOutput, outputMatrix.begin(), outputMatrix.end());	
 	return outputMatrix;
 }
 
@@ -124,10 +124,10 @@ SEXP cppTranspose(SEXP quasarclPtr_, SEXP inputMatrix_)
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferInput = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
+	cl::Buffer bufferInput = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
 
-	cl::copy(queue, inputMatrix.begin(), inputMatrix.end(), bufferInput);
+	cl::copy(queue, inputMatrix.begin(), inputMatrix.end(), bufferInput);	
 	
 	quasarcl::transpose(*quasarclPtr, bufferInput, height, width, bufferOutput);
 	
@@ -152,13 +152,13 @@ SEXP cppDivide(SEXP quasarclPtr_, SEXP inputMatrix_, SEXP divisorMatrix_)
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferInput = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferDivisor = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
+	cl::Buffer bufferInput = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferDivisor = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
 	
 	cl::copy(queue, inputMatrix.begin(), inputMatrix.end(), bufferInput);
 	cl::copy(queue, divisorMatrix.begin(), divisorMatrix.end(), bufferDivisor);
-	
+		
 	quasarcl::divide(*quasarclPtr, bufferInput, height, width, bufferDivisor, bufferOutput);
 	
 	Rcpp::NumericMatrix outputMatrix(height, width);

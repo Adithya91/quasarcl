@@ -6,16 +6,16 @@
 
 	
 //[[Rcpp::export]]
-SEXP cppFeFit(SEXP quasarclPtr_, SEXP spectrumsMatrix_, SEXP wavelengthsMatrix_, 
-				 SEXP errorsMatrix_, SEXP continuumsMatrix_, SEXP sizesVector_, 
-				 SEXP feTemplateList_, SEXP windowsVector_, SEXP fitParametersList_)
+SEXP cppFeFit(SEXP quasarclPtr_, SEXP specDataList_, SEXP feTemplateList_, SEXP windowsVector_, 
+			  SEXP fitParametersList_)
 {
 	Rcpp::XPtr<quasarcl::QuasarCL> quasarclPtr(quasarclPtr_);
-	Rcpp::NumericMatrix spectrumsMatrix(spectrumsMatrix_);
-	Rcpp::NumericMatrix wavelengthsMatrix(wavelengthsMatrix_);
-	Rcpp::NumericMatrix errorsMatrix(errorsMatrix_);
-	Rcpp::NumericMatrix continuumsMatrix(errorsMatrix_);
-	Rcpp::IntegerVector sizesVector(sizesVector_);
+	Rcpp::List specData(specDataList_);
+	Rcpp::NumericMatrix spectrumsMatrix = specData["spectrumsMatrix"];
+	Rcpp::NumericMatrix wavelengthsMatrix = specData["wavelengthsMatrix"];
+	Rcpp::NumericMatrix errorsMatrix = specData["errorsMatrix"];
+	Rcpp::NumericMatrix continuumsMatrix = specData["continuumsMatrix"];
+	Rcpp::IntegerVector sizesVector = specData["sizes"];
 	
 	Rcpp::List feTemplate(feTemplateList_);
 	std::vector<cl_double2> windowsVector = Rcpp::as<std::vector<cl_double2> >(windowsVector_);
@@ -29,11 +29,11 @@ SEXP cppFeFit(SEXP quasarclPtr_, SEXP spectrumsMatrix_, SEXP wavelengthsMatrix_,
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferSpectrums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferWavelengths = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferErrors = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferContinuums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(uint));
+	cl::Buffer bufferSpectrums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferWavelengths = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferErrors = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferContinuums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_WRITE, spectrumsNumber * sizeof(cl_uint));
 	
 	cl::copy(queue, spectrumsMatrix.begin(), spectrumsMatrix.end(), bufferSpectrums);
 	cl::copy(queue, wavelengthsMatrix.begin(), wavelengthsMatrix.end(), bufferWavelengths);
@@ -41,14 +41,13 @@ SEXP cppFeFit(SEXP quasarclPtr_, SEXP spectrumsMatrix_, SEXP wavelengthsMatrix_,
 	cl::copy(queue, continuumsMatrix.begin(), continuumsMatrix.end(), bufferContinuums);
 	cl::copy(queue, sizesVector.begin(), sizesVector.end(), bufferSizes);
 	
-	
-	quasarcl::Data specData = {
+	/*quasarcl::Data specData = {
 		spectrumsMatrix,
 		wavelengthsMatrix,
 		errorsMatrix,
 		continuumsMatrix,
 		sizesVector
-	};
+	};*/
 
 	quasarcl::Buffers specBuffers = {
 		bufferSpectrums,
@@ -95,8 +94,8 @@ SEXP cppCalcFeTemplateMatrix(SEXP quasarclPtr_, SEXP wavelengthsMatrix_, SEXP si
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferWavelengths = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(uint));
+	cl::Buffer bufferWavelengths = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(cl_uint));
 	
 	cl::copy(queue, wavelengthsMatrix.begin(), wavelengthsMatrix.end(), bufferWavelengths);
 	cl::copy(queue, sizesVector.begin(), sizesVector.end(), bufferSizes);
@@ -130,9 +129,9 @@ SEXP cppCalcFeTemplateScaleRates(SEXP quasarclPtr_, SEXP spectrumsMatrix_, SEXP 
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferSpectrums = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferTemplateFe = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(uint));
+	cl::Buffer bufferSpectrums = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferTemplateFe = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(cl_uint));
 	
 	cl::copy(queue, spectrumsMatrix.begin(), spectrumsMatrix.end(), bufferSpectrums);
 	cl::copy(queue, templateFeMatrix.begin(), templateFeMatrix.end(), bufferTemplateFe);
@@ -166,10 +165,10 @@ SEXP cppCalcReducedChisqs(SEXP quasarclPtr_, SEXP fMatrix_, SEXP yMatrix_, SEXP 
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferF = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferY = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferErrors = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(uint));
+	cl::Buffer bufferF = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferY = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferErrors = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(cl_uint));
 	
 	cl::copy(queue, fMatrix.begin(), fMatrix.end(), bufferF);
 	cl::copy(queue, yMatrix.begin(), yMatrix.end(), bufferY);
@@ -200,7 +199,7 @@ SEXP cppCpuConvolve(SEXP quasarclPtr_, SEXP signalVector_, SEXP kernelVector_, S
 
 
 //[[Rcpp::export]]
-SEXP cppReduceFeChisq(SEXP quasarclPtr_, SEXP chisqsVector_, SEXP sizesVector_)
+SEXP cppReduceFeChisqs(SEXP quasarclPtr_, SEXP chisqsVector_, SEXP sizesVector_)
 {
 	Rcpp::XPtr<quasarcl::QuasarCL> quasarclPtr(quasarclPtr_);
 	Rcpp::NumericVector chisqsVector(chisqsVector_);
@@ -211,8 +210,8 @@ SEXP cppReduceFeChisq(SEXP quasarclPtr_, SEXP chisqsVector_, SEXP sizesVector_)
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferChisqs = cl::Buffer(context, CL_MEM_READ_WRITE, size * sizeof(double));
-	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, size * sizeof(uint));
+	cl::Buffer bufferChisqs = cl::Buffer(context, CL_MEM_READ_WRITE, size * sizeof(cl_double));
+	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, size * sizeof(cl_uint));
 	
 	cl::copy(queue, chisqsVector.begin(), chisqsVector.end(), bufferChisqs);
 	cl::copy(queue, sizesVector.begin(), sizesVector.end(), bufferSizes);

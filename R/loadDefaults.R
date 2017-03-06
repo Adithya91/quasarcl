@@ -14,6 +14,7 @@ loadDefaultContinuumWindows <- function()
 }
 
 
+
 #' @export
 loadDefaultFeWindows <- function() 
 {
@@ -22,10 +23,26 @@ loadDefaultFeWindows <- function()
 }
 
 
+
 #' @export
 loadDefaultSpectralLines <-function() 
 {
 	file <- system.file("data", "spectral_lines",  package = "quasar")
-	print(file)
 	return (loadSpectralLines(file))
+}
+
+
+
+#' @export
+loadDefaultFitParameters <- function()
+{
+	return (DEFAULT_FIT_PARAMETERS)
+}
+
+
+
+#' @export
+loadDefaultAmpWavelength <- function()
+{
+	return (DEFAULT_AMP_WAVELENGTH)
 }

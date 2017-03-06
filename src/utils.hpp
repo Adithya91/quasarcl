@@ -45,8 +45,8 @@ namespace quasarcl {
 	
 	
 
-	inline size_t calcGlobalSize(size_t maxWorkGroupSize, size_t dataSize) {
-	
+	inline size_t calcGlobalSize(size_t maxWorkGroupSize, size_t dataSize)
+	{
 		size_t size = dataSize;
 		size_t remainder = size % maxWorkGroupSize;
 		if (remainder != 0)

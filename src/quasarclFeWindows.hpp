@@ -31,6 +31,7 @@ namespace quasarcl {
 				cl::NullRange,
 				global,
 				local);
+		queue.finish();
 	}
 
 }

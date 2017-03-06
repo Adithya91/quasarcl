@@ -4,26 +4,26 @@
 
 
 #' @export
-rFeFit <- function(quasarcl, spectrumsMatrix, wavelengthsMatrix, errorsMatrix, continuumsMatrix,
-					  sizesVector, feTemplate, windows = NULL, fitParameters = NULL) 
+rFeFit <- function(quasarcl, spectrumsMatrix, spectrumsData, feTemplate, windows = NULL, 
+				   fitParameters = NULL) 
 {
 	if(!isInitialized(quasarcl)) 
 	{
 		stop("QuasarCL is not initialized!")
 	}
-	if(!identical(dim(spectrumsMatrix), dim(wavelengthsMatrix))) 
+	if(!identical(dim(spectrumsData$spectrumsMatrix), dim(spectrumsData$wavelengthsMatrix))) 
 	{
 		stop("Matrices with different dimensions")
 	}
-	if(!identical(dim(spectrumsMatrix), dim(errorsMatrix)))
+	if(!identical(dim(spectrumsData$spectrumsMatrix), dim(spectrumsData$errorsMatrix)))
 	{
 		stop("Matrices with different dimensions")
 	}
-	if(!identical(dim(spectrumsMatrix), dim(continuumsMatrix))) 
+	if(!identical(dim(spectrumsData$spectrumsMatrix), dim(spectrumsData$continuumsMatrix))) 
 	{
 		stop("Matrices with different dimensions")
 	}
-	if(!identical(nrow(spectrumsMatrix), length(sizesVector))) 
+	if(!identical(nrow(spectrumsData$spectrumsMatrix), length(spectrumsData$sizesVector))) 
 	{
 		stop("Invalid spectrums sizes vector length")
 	}
@@ -35,9 +35,7 @@ rFeFit <- function(quasarcl, spectrumsMatrix, wavelengthsMatrix, errorsMatrix, c
 	{
 		fitParameters <- DEFAULT_FIT_PARAMETERS
 	}
-	return (cppFeFitRun(quasarcl, spectrumsMatrix, wavelengthsMatrix, errorsMatrix, 
-							  continuumsMatrix, sizesVector, feTemplate, windows, 
-							  fitParameters))
+	return (cppFeFit(quasarcl, spectrumsData, feTemplate, windows, fitParameters))
 }
 
 

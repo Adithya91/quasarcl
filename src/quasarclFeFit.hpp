@@ -12,7 +12,6 @@
 using namespace Rcpp;
 
 namespace quasarcl {
-	
 
 	struct FitResults
 	{
@@ -28,14 +27,14 @@ namespace quasarcl {
 	
 		
 	
-	struct Data
+/*	struct Data
 	{		
 			const Rcpp::NumericVector& spectrumsMatrixHost;
 			const Rcpp::NumericVector& wavelengthsMatrixHost;
 			const Rcpp::NumericVector& errorsMatrixHost;
 			const Rcpp::NumericVector& continuumsMatrixHost;
 			const Rcpp::IntegerVector& sizes;
-	};
+	};*/
 
 	
 
@@ -139,7 +138,6 @@ namespace quasarcl {
 		{
 			// Prędkość światła [m/s]
 			const double C = 299792458.0;
-
 			double sincov = std::pow(std::pow( Rcpp::as<double>(fitParameters["fwhmn"]), 2.0) - std::pow( Rcpp::as<double>(fitParameters["fwhmt"]), 2.0), 0.5)
 					/ 2.0;
 			sincov /= pow((2.0 * std::log(2.0)), 0.5) * C / 1e3;
@@ -170,9 +168,11 @@ namespace quasarcl {
 		{
 			templateFeValuesVec = feTemplate["values"];
 		}
+		
 		cl::Buffer templateFeMatrix = cl::Buffer(context, CL_MEM_READ_WRITE, size * ASTRO_OBJ_SPEC_SIZE * sizeof(cl_double));
 		{
 			cl::Buffer zeros = cl::Buffer(context, CL_MEM_READ_WRITE, size * ASTRO_OBJ_SPEC_SIZE * sizeof(cl_double));
+			Rcpp::NumericVector zerosVec(size * ASTRO_OBJ_SPEC_SIZE, 0.0);
 			{
 				Rcpp::NumericVector zerosVec(size * ASTRO_OBJ_SPEC_SIZE, 0.0);
 				cl::copy(queue, zerosVec.begin(), zerosVec.end(), zeros);
@@ -190,14 +190,14 @@ namespace quasarcl {
 			addSpectrum(*quasarclPtr, zeros, wavelengthsMatrix, sizes, size,
 					templateFeLambda, templateFeValues, templateFeValuesVec.size(),
 					templateFeMatrix);
+			
 		}
-
 		return templateFeMatrix;
 	}
 	
 	
 	
-	inline FitResults feFit(Rcpp::XPtr<QuasarCL> quasarclPtr, Data spectrumsData, Buffers spectrumsBuffers, 
+	inline FitResults feFit(Rcpp::XPtr<QuasarCL> quasarclPtr, Rcpp::List spectrumsData, Buffers spectrumsBuffers, 
 							const size_t size, Rcpp::List feTemplate, std::vector<cl_double2> feWindows,
 							Rcpp::List fitParameters)
 	{
@@ -213,7 +213,7 @@ namespace quasarcl {
 		cl::Buffer errorsMatrix = spectrumsBuffers.errorsMatrix;
 		cl::Buffer continuumsMatrix = spectrumsBuffers.continuumsMatrix;
 		cl::Buffer sizes = spectrumsBuffers.sizes;
-
+		
 		// ________________________________________________________________________ //
 		// __przygotowanie/przetwarzanie szablonu żelaza___________________________ //
 		// ________________________________________________________________________ //
@@ -310,8 +310,8 @@ namespace quasarcl {
 			cl::copy(queue, sizes_fewindows_filtered, sizes_filtered_vec.begin(), sizes_filtered_vec.end());
 			auto max = *std::max_element(sizes_filtered_vec.begin(), sizes_filtered_vec.end());
 			
-			size_t max_spectrum_filtered_size = max > 0 ? max : 64;			
-			max_spectrum_filtered_size = calcGlobalSize(64, max_spectrum_filtered_size);			
+			size_t max_spectrum_filtered_size = max > 0 ? max : 64;
+			max_spectrum_filtered_size = calcGlobalSize(64, max_spectrum_filtered_size);
 
 			copyIfNotInf(*quasarclPtr, spectrumsMatrix, size, ASTRO_OBJ_SPEC_SIZE, spectrumsMatrix, max_spectrum_filtered_size);
 			copyIfNotInf(*quasarclPtr, wavelengthsMatrix, size, ASTRO_OBJ_SPEC_SIZE, wavelengthsMatrix, max_spectrum_filtered_size);
@@ -358,13 +358,18 @@ namespace quasarcl {
 		// ________________________________________________________________________ //
 
 		// Załadowanie pełnych wersji widm, długości fal, błędów i kontinuum
-		cl::copy(queue, spectrumsData.spectrumsMatrixHost.begin(), spectrumsData.spectrumsMatrixHost.end(),
+		Rcpp::NumericMatrix spectrumsMatrixHost = spectrumsData["spectrumsMatrix"];
+		Rcpp::NumericMatrix wavelengthsMatrixHost = spectrumsData["wavelengthsMatrix"];
+		Rcpp::NumericMatrix errorsMatrixHost = spectrumsData["errorsMatrix"];
+		Rcpp::NumericMatrix continuumsMatrixHost = spectrumsData["continuumsMatrix"];
+		
+		cl::copy(queue, spectrumsMatrixHost.begin(), spectrumsMatrixHost.end(),
 				spectrumsMatrix);
-		cl::copy(queue, spectrumsData.wavelengthsMatrixHost.begin(), spectrumsData.wavelengthsMatrixHost.end(),
+		cl::copy(queue, wavelengthsMatrixHost.begin(), wavelengthsMatrixHost.end(),
 				wavelengthsMatrix);
-		cl::copy(queue, spectrumsData.errorsMatrixHost.begin(), spectrumsData.errorsMatrixHost.end(),
+		cl::copy(queue, errorsMatrixHost.begin(), errorsMatrixHost.end(),
 				errorsMatrix);
-		cl::copy(queue, spectrumsData.continuumsMatrixHost.begin(), spectrumsData.continuumsMatrixHost.end(),
+		cl::copy(queue, continuumsMatrixHost.begin(), continuumsMatrixHost.end(),
 				continuumsMatrix);
 
 		// jeżeli continuum nie zostało odjęte od widm to odejmujemy

@@ -18,8 +18,8 @@
 		cl::Buffer bufferReglinResults = cl::Buffer(context, CL_MEM_READ_WRITE, size * sizeof(cl_double8));
 
 		cl::copy(queue, cReglinResultsVector.begin(), cReglinResultsVector.end(), bufferCReglinResults);
-		cl::copy(queue, reglinResultsVector.begin(), reglinResultsVector.end(), bufferReglinResults);
-
+		cl::copy(queue, reglinResultsVector.begin(), reglinResultsVector.end(), bufferReglinResults);		
+		
 		quasarcl::fixReglinResults(*quasarclPtr, bufferCReglinResults, bufferReglinResults, size);
 		
 		std::vector<cl_double8> outputCReglinResultsVector(size);
@@ -27,7 +27,7 @@
 		
 		cl::copy(queue, bufferCReglinResults, outputCReglinResultsVector.begin(), outputCReglinResultsVector.end());
 		cl::copy(queue, bufferReglinResults, outputReglinResultsVector.begin(), outputReglinResultsVector.end());
-
+			
 		return Rcpp::List::create(Rcpp::Named("cReglinResults") = Rcpp::wrap(outputCReglinResultsVector),
 								  Rcpp::Named("reglinResults") = Rcpp::wrap(outputReglinResultsVector));
 		
@@ -36,16 +36,13 @@
 	
 
 	//[[Rcpp::export]]
-	SEXP cppCalcCfunDcfun(SEXP quasarclPtr_, SEXP wavelengthsMatrix_, SEXP dcontinuumsMatrix_, SEXP continuumsMatrix_, 
-						  SEXP cReglinResultsVector_, SEXP reglinResultsVector_)
+	SEXP cppCalcCfunDcfun(SEXP quasarclPtr_, SEXP wavelengthsMatrix_, SEXP cReglinResultsVector_, SEXP reglinResultsVector_)
 	{
 		Rcpp::XPtr<quasarcl::QuasarCL> quasarclPtr(quasarclPtr_);
 		Rcpp::NumericMatrix wavelengthsMatrix(wavelengthsMatrix_);
-		Rcpp::NumericMatrix dcontinuumsMatrix(dcontinuumsMatrix_);
-		Rcpp::NumericMatrix continuumsMatrix(continuumsMatrix_);
 		
-		std::vector<cl_double8> cReglinResultsVector = Rcpp::as<std::vector<cl_double8> >(cReglinResultsVector_);
-		std::vector<cl_double8> reglinResultsVector = Rcpp::as<std::vector<cl_double8> >(reglinResultsVector_);
+		std::vector<cl_double8> cReglinResultsVector = Rcpp::as<std::vector<cl_double8>>(cReglinResultsVector_);
+		std::vector<cl_double8> reglinResultsVector = Rcpp::as<std::vector<cl_double8>>(reglinResultsVector_);
 		
 		const size_t spectrumsSize = wavelengthsMatrix.cols();
 		const size_t spectrumsNumber = wavelengthsMatrix.rows();
@@ -54,27 +51,25 @@
 		auto context = quasarclPtr->getContext();
 		auto queue = quasarclPtr->getQueue();
 		
-		cl::Buffer bufferWavelengths = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-		cl::Buffer bufferDcontinuums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-		cl::Buffer bufferContinuums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
+		cl::Buffer bufferWavelengths = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+		cl::Buffer bufferDcontinuums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+		cl::Buffer bufferContinuums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
 		cl::Buffer bufferCReglinResults = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(cl_double8));
 		cl::Buffer bufferReglinResults = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(cl_double8));
 		
 		cl::copy(queue, wavelengthsMatrix.begin(), wavelengthsMatrix.end(), bufferWavelengths);
-		cl::copy(queue, dcontinuumsMatrix.begin(), dcontinuumsMatrix.end(), bufferDcontinuums);
-		cl::copy(queue, continuumsMatrix.begin(), continuumsMatrix.end(), bufferContinuums);
 		cl::copy(queue, cReglinResultsVector.begin(), cReglinResultsVector.end(), bufferCReglinResults);
 		cl::copy(queue, reglinResultsVector.begin(), reglinResultsVector.end(), bufferReglinResults);
-		
+				
 		quasarcl::calcCfunDcfun(*quasarclPtr, bufferWavelengths, bufferDcontinuums, bufferContinuums, spectrumsNumber, 
-								bufferReglinResults, bufferCReglinResults);
+								bufferCReglinResults, bufferReglinResults);
 		
 		Rcpp::NumericMatrix outputDContinuumsMatrix(spectrumsNumber, spectrumsSize);
 		Rcpp::NumericMatrix outputContinuumsMatrix(spectrumsNumber, spectrumsSize);
 		
 		cl::copy(queue, bufferDcontinuums, outputDContinuumsMatrix.begin(), outputDContinuumsMatrix.end());
 		cl::copy(queue, bufferContinuums, outputContinuumsMatrix.begin(), outputContinuumsMatrix.end());
-		
+				
 		return Rcpp::List::create(Rcpp::Named("dcontinuums") = outputDContinuumsMatrix, 
 								  Rcpp::Named("continuums") = outputContinuumsMatrix);
 	}
@@ -82,11 +77,10 @@
 	
 	
 	//[[Rcpp::export]]
-	SEXP cppCalcCw(SEXP quasarclPtr_, SEXP wavelengthsMatrix_, SEXP continuumsMatrix_, SEXP cReglinResultsVector_)
+	SEXP cppCalcCw(SEXP quasarclPtr_, SEXP wavelengthsMatrix_, SEXP cReglinResultsVector_)
 	{
 		Rcpp::XPtr<quasarcl::QuasarCL> quasarclPtr(quasarclPtr_);
 		Rcpp::NumericMatrix wavelengthsMatrix(wavelengthsMatrix_);
-		Rcpp::NumericMatrix continuumsMatrix(continuumsMatrix_);
 		
 		std::vector<cl_double8> cReglinResultsVector = Rcpp::as<std::vector<cl_double8> >(cReglinResultsVector_);
 		
@@ -97,19 +91,18 @@
 		auto context = quasarclPtr->getContext();
 		auto queue = quasarclPtr->getQueue();
 		
-		cl::Buffer bufferWavelengths = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-		cl::Buffer bufferContinuums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
+		cl::Buffer bufferWavelengths = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+		cl::Buffer bufferContinuums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
 		cl::Buffer bufferCReglinResults = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(cl_double8));
 		
 		cl::copy(queue, wavelengthsMatrix.begin(), wavelengthsMatrix.end(), bufferWavelengths);
-		cl::copy(queue, continuumsMatrix.begin(), continuumsMatrix.end(), bufferContinuums);
 		cl::copy(queue, cReglinResultsVector.begin(), cReglinResultsVector.end(), bufferCReglinResults);
-		
+			
 		quasarcl::calcCw(*quasarclPtr, bufferWavelengths, bufferContinuums, spectrumsSize, spectrumsNumber, 
 						 bufferCReglinResults);
 		
 		Rcpp::NumericMatrix outputContinuumsMatrix(spectrumsNumber, spectrumsSize);
-		cl::copy(queue, bufferContinuums, outputContinuumsMatrix.begin(), outputContinuumsMatrix.end());
+		cl::copy(queue, bufferContinuums, outputContinuumsMatrix.begin(), outputContinuumsMatrix.end());		
 		return outputContinuumsMatrix;
 	} 
 	
@@ -127,8 +120,8 @@
 		auto context = quasarclPtr->getContext();
 		auto queue = quasarclPtr->getQueue();
 		
-		cl::Buffer bufferChisqs = cl::Buffer(context, CL_MEM_READ_WRITE, size * sizeof(double));
-		cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, size * sizeof(uint));
+		cl::Buffer bufferChisqs = cl::Buffer(context, CL_MEM_READ_WRITE, size * sizeof(cl_double));
+		cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, size * sizeof(cl_uint));
 		
 		cl::copy(queue, chisqsVector.begin(), chisqsVector.end(), bufferChisqs);
 		cl::copy(queue, sizesVector.begin(), sizesVector.end(), bufferSizes);

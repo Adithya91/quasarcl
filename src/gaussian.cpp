@@ -3,12 +3,15 @@
 
 	
 //[[Rcpp::export]]
-SEXP cppFitGaussian(SEXP quasarclPtr_, SEXP yMatrix_, SEXP xMatrix_, SEXP sizesVector_)
+SEXP cppFitGaussian(SEXP quasarclPtr_, SEXP yMatrix_, SEXP xMatrix_, SEXP sizesVector_,
+					SEXP resultsVector_
+)
 {
 	Rcpp::XPtr<quasarcl::QuasarCL> quasarclPtr(quasarclPtr_);
 	Rcpp::NumericMatrix yMatrix(yMatrix_);
 	Rcpp::NumericMatrix xMatrix(xMatrix_);
 	Rcpp::IntegerVector sizesVector(sizesVector_);
+	std::vector<cl_double4> resultsVector = Rcpp::as<std::vector<cl_double4>>(resultsVector_);
 	
 	auto spectrumsNumber = xMatrix.rows();
 	auto spectrumsSize = xMatrix.cols();
@@ -17,19 +20,20 @@ SEXP cppFitGaussian(SEXP quasarclPtr_, SEXP yMatrix_, SEXP xMatrix_, SEXP sizesV
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferY = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferX = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(uint));
-	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, spectrumsNumber * sizeof(cl_double4));
+	cl::Buffer bufferY = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferX = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(cl_uint));
+	cl::Buffer bufferResults = cl::Buffer(context, CL_MEM_READ_WRITE, spectrumsNumber * sizeof(cl_double4));
 	
 	cl::copy(queue, xMatrix.begin(), xMatrix.end(), bufferX);
 	cl::copy(queue, yMatrix.begin(), yMatrix.end(), bufferY);
 	cl::copy(queue, sizesVector.begin(), sizesVector.end(), bufferSizes);
+	cl::copy(queue, resultsVector.begin(), resultsVector.end(), bufferResults);
 	
-	quasarcl::fitGaussian(*quasarclPtr, bufferY, bufferX, bufferSizes, spectrumsNumber, bufferOutput);
+	quasarcl::fitGaussian(*quasarclPtr, bufferY, bufferX, bufferSizes, spectrumsNumber, bufferResults);
 	
 	std::vector<cl_double4> outputVector(spectrumsNumber);	
-	cl::copy(queue, bufferOutput, outputVector.begin(), outputVector.end());
+	cl::copy(queue, bufferResults, outputVector.begin(), outputVector.end());
 	return Rcpp::wrap(outputVector);
 	
 }
@@ -52,10 +56,10 @@ SEXP cppCalcGaussian(SEXP quasarclPtr_, SEXP xMatrix_, SEXP gaussianParamsVector
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferX = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
+	cl::Buffer bufferX = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
 	cl::Buffer bufferGaussianParams = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(cl_double4));
-	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(uint));
-	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
+	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(cl_uint));
+	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
 	
 	cl::copy(queue, xMatrix.begin(), xMatrix.end(), bufferX);
 	cl::copy(queue, gaussianParamsVector.begin(), gaussianParamsVector.end(), bufferGaussianParams);
@@ -89,12 +93,12 @@ SEXP cppCalcGaussianChisqs(SEXP quasarclPtr_, SEXP xMatrix_, SEXP yMatrix_, SEXP
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferX = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferY = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
-	cl::Buffer bufferErrors = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
+	cl::Buffer bufferX = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferY = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
+	cl::Buffer bufferErrors = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
 	cl::Buffer bufferGaussianParams = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(cl_double4));
-	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(uint));
-	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, spectrumsNumber * sizeof(double));
+	cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(cl_uint));
+	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, spectrumsNumber * sizeof(cl_double));
 	
 	cl::copy(queue, xMatrix.begin(), xMatrix.end(), bufferX);
 	cl::copy(queue, yMatrix.begin(), yMatrix.end(), bufferY);
@@ -124,7 +128,7 @@ SEXP cppCalcGaussianFWHM(SEXP quasarclPtr_, SEXP gaussianParamsVector_)
 	auto queue = quasarclPtr->getQueue();
 	
 	cl::Buffer bufferGaussianParams = cl::Buffer(context, CL_MEM_READ_ONLY, size * sizeof(cl_double4));
-	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, size * sizeof(double));
+	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, size * sizeof(cl_double));
 	
 	cl::copy(queue, gaussianParamsVector.begin(), gaussianParamsVector.end(), bufferGaussianParams);
 	

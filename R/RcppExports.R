@@ -29,12 +29,12 @@ cppFixReglinResults <- function(quasarclPtr_, cReglinResultsVector_, reglinResul
     .Call('quasar_cppFixReglinResults', PACKAGE = 'quasar', quasarclPtr_, cReglinResultsVector_, reglinResultsVector_)
 }
 
-cppCalcCfunDcfun <- function(quasarclPtr_, wavelengthsMatrix_, dcontinuumsMatrix_, continuumsMatrix_, cReglinResultsVector_, reglinResultsVector_) {
-    .Call('quasar_cppCalcCfunDcfun', PACKAGE = 'quasar', quasarclPtr_, wavelengthsMatrix_, dcontinuumsMatrix_, continuumsMatrix_, cReglinResultsVector_, reglinResultsVector_)
+cppCalcCfunDcfun <- function(quasarclPtr_, wavelengthsMatrix_, cReglinResultsVector_, reglinResultsVector_) {
+    .Call('quasar_cppCalcCfunDcfun', PACKAGE = 'quasar', quasarclPtr_, wavelengthsMatrix_, cReglinResultsVector_, reglinResultsVector_)
 }
 
-cppCalcCw <- function(quasarclPtr_, wavelengthsMatrix_, continuumsMatrix_, cReglinResultsVector_) {
-    .Call('quasar_cppCalcCw', PACKAGE = 'quasar', quasarclPtr_, wavelengthsMatrix_, continuumsMatrix_, cReglinResultsVector_)
+cppCalcCw <- function(quasarclPtr_, wavelengthsMatrix_, cReglinResultsVector_) {
+    .Call('quasar_cppCalcCw', PACKAGE = 'quasar', quasarclPtr_, wavelengthsMatrix_, cReglinResultsVector_)
 }
 
 cppReduceContinuumChisqs <- function(quasarclPtr_, chisqsVector_, sizesVector_) {
@@ -45,8 +45,8 @@ cppContinuum <- function(quasarclPtr_, spectrumsMatrix_, wavelengthsMatrix_, err
     .Call('quasar_cppContinuum', PACKAGE = 'quasar', quasarclPtr_, spectrumsMatrix_, wavelengthsMatrix_, errorsMatrix_, sizesVector_, windowsVector_, ampWavelength_)
 }
 
-cppFeFit <- function(quasarclPtr_, spectrumsMatrix_, wavelengthsMatrix_, errorsMatrix_, continuumsMatrix_, sizesVector_, feTemplateList_, windowsVector_, fitParametersList_) {
-    .Call('quasar_cppFeFit', PACKAGE = 'quasar', quasarclPtr_, spectrumsMatrix_, wavelengthsMatrix_, errorsMatrix_, continuumsMatrix_, sizesVector_, feTemplateList_, windowsVector_, fitParametersList_)
+cppFeFit <- function(quasarclPtr_, specDataList_, feTemplateList_, windowsVector_, fitParametersList_) {
+    .Call('quasar_cppFeFit', PACKAGE = 'quasar', quasarclPtr_, specDataList_, feTemplateList_, windowsVector_, fitParametersList_)
 }
 
 cppCalcFeTemplateMatrix <- function(quasarclPtr_, wavelengthsMatrix_, sizesVector_, feTemplateList_, fitParametersList_) {
@@ -65,12 +65,12 @@ cppCpuConvolve <- function(quasarclPtr_, signalVector_, kernelVector_, same_) {
     .Call('quasar_cppCpuConvolve', PACKAGE = 'quasar', quasarclPtr_, signalVector_, kernelVector_, same_)
 }
 
-cppReduceFeChisq <- function(quasarclPtr_, chisqsVector_, sizesVector_) {
-    .Call('quasar_cppReduceFeChisq', PACKAGE = 'quasar', quasarclPtr_, chisqsVector_, sizesVector_)
+cppReduceFeChisqs <- function(quasarclPtr_, chisqsVector_, sizesVector_) {
+    .Call('quasar_cppReduceFeChisqs', PACKAGE = 'quasar', quasarclPtr_, chisqsVector_, sizesVector_)
 }
 
-cppFitGaussian <- function(quasarclPtr_, yMatrix_, xMatrix_, sizesVector_) {
-    .Call('quasar_cppFitGaussian', PACKAGE = 'quasar', quasarclPtr_, yMatrix_, xMatrix_, sizesVector_)
+cppFitGaussian <- function(quasarclPtr_, yMatrix_, xMatrix_, sizesVector_, resultsVector_) {
+    .Call('quasar_cppFitGaussian', PACKAGE = 'quasar', quasarclPtr_, yMatrix_, xMatrix_, sizesVector_, resultsVector_)
 }
 
 cppCalcGaussian <- function(quasarclPtr_, xMatrix_, gaussianParamsVector_, sizesVector_) {

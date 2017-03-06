@@ -31,8 +31,8 @@ coordinatesToName <- function(ra, dec, prefix)
 
 adjustSize <- function(size) 
 {
-	newSize = size
-	remainder = newSize %% 64
+	newSize <- ifelse(size > 0, size, 64)
+	remainder <- newSize %% 64
 	if (remainder != 0)
 	{
 		newSize <- newSize + (64 - remainder)

@@ -15,8 +15,8 @@ SEXP cppSimpleMAVG(SEXP quasarclPtr_, SEXP inputMatrix_, SEXP windowWidth_)
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferInput = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));;
-	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
+	cl::Buffer bufferInput = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));;
+	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
 	
 	cl::copy(queue, inputMatrix.begin(), inputMatrix.end(), bufferInput);
 	
@@ -47,9 +47,9 @@ SEXP cppCenteredMAVG(SEXP quasarclPtr_, SEXP inputMatrix_, SEXP colsSizesVector_
 	auto context = quasarclPtr->getContext();
 	auto queue = quasarclPtr->getQueue();
 	
-	cl::Buffer bufferInput = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(double));
+	cl::Buffer bufferInput = cl::Buffer(context, CL_MEM_READ_ONLY, N * sizeof(cl_double));
 	cl::Buffer bufferColsSizes = cl::Buffer(context, CL_MEM_READ_ONLY, spectrumsNumber * sizeof(cl_uint));
-	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
+	cl::Buffer bufferOutput = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
 	
 	cl::copy(queue, inputMatrix.begin(), inputMatrix.end(), bufferInput);
 	cl::copy(queue, colsSizesVector.begin(), colsSizesVector.end(), bufferColsSizes);

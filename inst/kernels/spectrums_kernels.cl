@@ -81,8 +81,8 @@ __kernel void addSpectrum
 	double to_add_value_next = to_add_spectrum[to_add_idx+1];	
 	
 
-	uchar idx_max_flag = 0;
-	uchar to_add_idx_max_flag = 0;
+	int idx_max_flag = 0;
+	int to_add_idx_max_flag = 0;
 
 	while(1)
 	{				
@@ -180,7 +180,7 @@ __kernel void filterWithWavelengthWindows
 	double spec_result = spectrums_matrix[idx];
 	double error_result = errors_matrix[idx];
 
-	uint window_idx = 0;	
+	uint window_idx = 0;
 	double2 window;
 	__local double2 window_local;
 	
@@ -191,9 +191,9 @@ __kernel void filterWithWavelengthWindows
 		window_flag = 0;
 		if (get_local_id(0) == 0)
 		{
-  			window_local = windows[window_idx];		
+  			window_local = windows[window_idx];
 		}
-		barrier(CLK_LOCAL_MEM_FENCE);
+		//barrier(CLK_LOCAL_MEM_FENCE);
 
 		window = window_local;
 
@@ -214,12 +214,66 @@ __kernel void filterWithWavelengthWindows
 	wl_result = select((double)INFINITY, wl_result, (long)(row_idx < size));
 	error_result = select((double)INFINITY, error_result, (long)(row_idx < size));
 
-	wavelengths_matrix[idx] = wl_result;	
+	wavelengths_matrix[idx] = wl_result;
+	//spectrums_matrix[idx] = (double)(global_flag==1);
 	spectrums_matrix[idx] = spec_result;
 	errors_matrix[idx] = error_result;
 }
 
+/*__kernel void filterWithWavelengthWindows
+	(
+		__global double * wavelengths_matrix,	// Długości fal widm
+		__global double * spectrums_matrix,	// Widma
+		__global double * errors_matrix,		// Błędy pomiaru widm
+		__global uint  * sizes,		 	// Rozmiary widm w spectrums_matrix
+		__constant double2 * windows,	// Okna	długości fal
+		uint windows_size 		// Ilość okien
+	)	
+{
+	// gid0 - numer widma kwazaru
+	uint gid0 = get_global_id(0);
+	// gid1 - numer elementu w widmie
+	uint gid1 = get_global_id(1);
+	// indeks 
+	uint idx = (gid0 * ASTRO_OBJ_SPEC_SIZE) + gid1;
 
+	uint size = sizes[idx % get_global_size(0)];
+
+	// Zero wskazuje na brak dopasownia do któregokolwiek okna
+	int global_flag = 0;
+
+	double wl_result = wavelengths_matrix[idx];
+	double spec_result = spectrums_matrix[idx];
+	double error_result = errors_matrix[idx];
+
+	uint window_idx = 0;
+	double2 window;
+	__local double2 window_local;
+	
+	// Pętla po wszystkich oknach
+	int window_flag;
+	for(; window_idx < windows_size; window_idx++)
+	{
+		window_flag = 0;
+		if (get_local_id(0) == 0)
+		{
+  			window_local = windows[window_idx];
+		}
+		//barrier(CLK_LOCAL_MEM_FENCE);
+
+		window = window_local;
+
+		if (wl_result >= window.x && wl_result <= window.y) {
+			global_flag = 1;
+		}
+	}
+	int row_idx = idx / get_global_size(0);
+	if (!(global_flag == 1 && row_idx < size)) {
+		wavelengths_matrix[idx] = (double)INFINITY;
+		spectrums_matrix[idx] = (double)INFINITY;
+		errors_matrix[idx] = (double)INFINITY;
+	}
+}*/
 
 // Filtruje tylko te dane, których odpowiadające
 // wartości ze spectrum_matrix są większe od zera.

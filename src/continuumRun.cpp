@@ -14,7 +14,7 @@
 		Rcpp::IntegerVector sizesVector(sizesVector_);
 		
 		std::vector<cl_double2> windowsVector = Rcpp::as<std::vector<cl_double2> >(windowsVector_);
-		double ampWavelength = Rcpp::as<double>(ampWavelength_);
+		cl_double ampWavelength = Rcpp::as<cl_double>(ampWavelength_);
 		
 		auto spectrumsNumber = spectrumsMatrix.rows();
 		auto spectrumsSize = spectrumsMatrix.cols();
@@ -23,10 +23,10 @@
 		auto context = quasarclPtr->getContext();
 		auto queue = quasarclPtr->getQueue();
 		
-		cl::Buffer bufferSpectrums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-		cl::Buffer bufferWavelengths = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-		cl::Buffer bufferErrors = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(double));
-		cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_WRITE, spectrumsNumber * sizeof(uint));
+		cl::Buffer bufferSpectrums = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+		cl::Buffer bufferWavelengths = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+		cl::Buffer bufferErrors = cl::Buffer(context, CL_MEM_READ_WRITE, N * sizeof(cl_double));
+		cl::Buffer bufferSizes = cl::Buffer(context, CL_MEM_READ_WRITE, spectrumsNumber * sizeof(cl_uint));
 		
 		cl::copy(queue, spectrumsMatrix.begin(), spectrumsMatrix.end(), bufferSpectrums);
 		cl::copy(queue, wavelengthsMatrix.begin(), wavelengthsMatrix.end(), bufferWavelengths);
