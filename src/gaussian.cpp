@@ -39,7 +39,6 @@ SEXP cppFitGaussian(SEXP quasarclPtr_, SEXP yMatrix_, SEXP xMatrix_, SEXP sizesV
 }
 
 
-
 //[[Rcpp::export]]
 SEXP cppCalcGaussian(SEXP quasarclPtr_, SEXP xMatrix_, SEXP gaussianParamsVector_, SEXP sizesVector_)
 {

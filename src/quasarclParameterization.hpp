@@ -122,7 +122,7 @@ namespace quasarcl {
 		return Rcpp::List::create(Rcpp::Named("fitParams") = fitGResultsVec,
 					Rcpp::Named("ews") = ewsVec,
 					Rcpp::Named("chisqs") = gaussianChisqsVec,
-					Rcpp::Named("gaussian_fwhms") = gaussianFWHMsVec
+					Rcpp::Named("gaussianFWHMs") = gaussianFWHMsVec
 		);
 	}
 
@@ -352,18 +352,17 @@ namespace quasarcl {
 
 		}
 		
-		Rcpp::List results = Rcpp::List::create(Rcpp::Named("chisqs") = continuumResults.chisqs,
-				Rcpp::Named("continuum_reglin_results") = continuumResults.c_reglin_result,
-				Rcpp::Named("reglin_results") = continuumResults.reglin_result,
-				Rcpp::Named("scaleRates") = feResults.scaleRates,
-				Rcpp::Named("sizes_fewindows") = feResults.sizes_fewindows,
-				Rcpp::Named("reducedChisqs_fewindows") = feResults.reducedChisqs_fewindows,
-				Rcpp::Named("reducedChisqs_full") = feResults.reducedChisqs_full,
-				Rcpp::Named("ews_full") = feResults.ews_full,
-				Rcpp::Named("reducedChisqs_feRange") = feResults.reducedChisqs_feRange,
-				Rcpp::Named("ews_feRange") = feResults.ews_feRange,
+		Rcpp::List results = Rcpp::List::create(Rcpp::Named("continuumChisqs") = continuumResults.chisqs,
+				Rcpp::Named("continuumReglin") = continuumResults.c_reglin_result,
+				Rcpp::Named("reglin") = continuumResults.reglin_result,
+				Rcpp::Named("feScaleRates") = feResults.scaleRates,
+				Rcpp::Named("feWindowsSizes") = feResults.sizes_fewindows,
+				Rcpp::Named("feWindowsReducedChisqs") = feResults.reducedChisqs_fewindows,
+				Rcpp::Named("feFullReducedChisqs") = feResults.reducedChisqs_full,
+				Rcpp::Named("feFullEWs") = feResults.ews_full,
+				Rcpp::Named("feRangeReducedChisqs") = feResults.reducedChisqs_feRange,
+				Rcpp::Named("feRangeEWs") = feResults.ews_feRange,
 				Rcpp::Named("elementsFits") = fitElementsResults);
-
 		return results;
 	}
 	

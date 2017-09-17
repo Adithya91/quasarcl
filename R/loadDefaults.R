@@ -46,3 +46,22 @@ loadDefaultAmpWavelength <- function()
 {
 	return (DEFAULT_AMP_WAVELENGTH)
 }
+
+
+
+#' @export
+loadDefaults <-function() {
+	spectralLines <- loadDefaultSpectralLines()
+	continuumWindows <- loadDefaultContinuumWindows()
+	ampWavelength <- loadDefaultAmpWavelength()
+	feWindows<- loadDefaultFeWindows()
+	fitParameters <- loadDefaultFitParameters()
+	
+	#print(loadDefaultContinuumWindows())
+	
+	return(list( spectralLines = spectralLines, 
+				 continuumWindows = continuumWindows, 
+				 ampWavelength = ampWavelength, 
+				 feWindows = feWindows,
+				 fitParameters = fitParameters))
+}

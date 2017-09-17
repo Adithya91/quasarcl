@@ -10,8 +10,7 @@ loadSpectralLines <- function(file)
     }
 	df <- read.table(file, header = FALSE)
 	colnames(df) <- c("name", "range0", "range1", "fitGuess0", "fitGuess1", "fitGuess2" )
-	
-	spectralLines <- apply(df[, 2:length(df)], 1, specLineToList)
+	spectralLines <- apply(df[, 1:length(df)], 1, specLineToList)
 	return (spectralLines)
 }
 
@@ -58,6 +57,18 @@ loadQuasarsFromFitFiles <- function(path)
 }
 
 
+#' @export
+downloadFitFilesFromServer <- function(path, from = 1, N =-1)
+{
+	if (!dir.exists(path)) 
+	{
+		stop("Directory does not exist")
+	}
+	df <-read.table(SERVER_QUASARS_INFO, nrows=N, fill=TRUE , na.strings="", skip=(80+from-1))
+	apply(df, 1, downloadFitFile, path)
+}
+
+
 
 #' @export
 getSpectrumsMatrix <- function(quasars) 
@@ -96,7 +107,7 @@ getAbzParams <- function(quasars)
 }
 
 
-
+#' @export
 getParams <- function(quasars) 
 {
 	params <-lapply(quasars, `[[`, 'params')
@@ -105,8 +116,11 @@ getParams <- function(quasars)
 
 
 
-specLineToList <- function(elem) 
+#' @export
+getLambda <- function(path, z) 
 {
-	return (list(range = c(elem[["range0"]], elem[["range1"]]), 
-				 fitGuess = c(elem[["fitGuess0"]], elem[["fitGuess1"]], elem[["fitGuess2"]], 0)))
+	data<-"lambda.csv"
+	assign(data,read.csv(paste("file://", path,data,sep=""),head=FALSE,sep=",",dec=".",na.strings=c("NA", "BD", "bd", "", "?")))
+	lambda<-10^get(data)[,1]
+	return(lambda/(z+1))
 }

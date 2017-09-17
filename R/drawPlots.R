@@ -1,0 +1,37 @@
+#' @export
+drawGaussianRawData <- function(element, i, lambda) 
+{
+	if (element$fitParams[[i]][4] > 0) {
+		lines(lambda, gaussian(lambda, element$fitParams[[i]][1] , element$fitParams[[i]][2], element$fitParams[[i]][3]), ylim=c(0,element$fitParams[[i]][1]))
+	}
+}
+
+
+
+#' @export
+drawGaussian <- function(element, lambda) 
+{
+	lines(lambda, gaussian(lambda, element$gaussianParams[1] , element$gaussianParams[2], element$gaussianParams[3], ylim=c(0,element$gaussianParams[1])))
+}
+
+
+
+#' @export
+drawSpectrum <- function(wave, lambda) 
+{
+	plot(lambda,wave[1:length(lambda)],ylim=c(0, max(wave)*1.1), type='l', lwd=.2,lty=10,main="Widmo kwazaru",xlab="wavelength [A]",ylab="flux (arbitrary units)");
+}
+
+
+
+#' @export
+drawSpectrumWithPeaksRawData <- function(picturePath, pictureName, lambdaPath, spectrumsEmissionLines, fitElements, abz, sizes) {
+	for (q in seq(1:length(sizes))) 
+	{
+		jpeg(file=paste(picturePath, pictureName ,q,".jpg",sep=""),width = 500, height = 500, quality = 55, bg = "white")
+		lambda <- getLambda(lambdaPath, abz[[q]][3])
+		drawSpectrum(spectrumsEmissionLines[q,][1:sizes[q]], lambda)
+		lapply(fitElements, drawGaussianRawData, q, lambda)
+		dev.off();
+	}
+}

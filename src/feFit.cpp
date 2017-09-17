@@ -41,13 +41,6 @@ SEXP cppFeFit(SEXP quasarclPtr_, SEXP specDataList_, SEXP feTemplateList_, SEXP 
 	cl::copy(queue, continuumsMatrix.begin(), continuumsMatrix.end(), bufferContinuums);
 	cl::copy(queue, sizesVector.begin(), sizesVector.end(), bufferSizes);
 	
-	/*quasarcl::Data specData = {
-		spectrumsMatrix,
-		wavelengthsMatrix,
-		errorsMatrix,
-		continuumsMatrix,
-		sizesVector
-	};*/
 
 	quasarcl::Buffers specBuffers = {
 		bufferSpectrums,
@@ -64,16 +57,16 @@ SEXP cppFeFit(SEXP quasarclPtr_, SEXP specDataList_, SEXP feTemplateList_, SEXP 
 	cl::copy(queue, results.feTemplateMatrix, templateFeMatrix.begin(), templateFeMatrix.end());
 	
 	return Rcpp::List::create(Rcpp::Named("feTemplateMatrix") = templateFeMatrix,
-							  Rcpp::Named("scaleRates") = results.scaleRates,
-							  Rcpp::Named("sizes_fewindows") = results.sizes_fewindows,
-							  Rcpp::Named("reducedChisqs_fewindows") = results.reducedChisqs_fewindows,
-							  Rcpp::Named("reducedChisqs_full") = results.reducedChisqs_full,
-							  Rcpp::Named("ews_full") = results.ews_full,
-							  Rcpp::Named("reducedChisqs_feRange") = results.reducedChisqs_feRange,
-							  Rcpp::Named("ews_feRange") = results.ews_feRange);
+							  Rcpp::Named("feScaleRates") = results.scaleRates,
+							  Rcpp::Named("feWindowsSizes") = results.sizes_fewindows,
+							  Rcpp::Named("feWindowsReducedChisqs") = results.reducedChisqs_fewindows,
+							  Rcpp::Named("feFullReducedChisqs") = results.reducedChisqs_full,
+							  Rcpp::Named("feFullEWs") = results.ews_full,
+							  Rcpp::Named("feRangeReducedChisqs") = results.reducedChisqs_feRange,
+							  Rcpp::Named("feRangeEWs") = results.ews_feRange);
 }
 
-
+//kj
 
 //[[Rcpp::export]]
 SEXP cppCalcFeTemplateMatrix(SEXP quasarclPtr_, SEXP wavelengthsMatrix_, SEXP sizesVector_,

@@ -16,9 +16,9 @@ parseFitFile <- function(file)
 parseHeader <- function(fitFile)
 {
 
-	mjd <- as.numeric(fitFile$hdr[which(fitFile$hdr == "MJD")+1])
-	fiber <- as.numeric(fitFile$hdr[which(fitFile$hdr == "FIBERID")+1])
-	plate <- as.numeric(fitFile$hdr[which(fitFile$hdr == "PLATEID")+1])
+	mjd <- as.integer(fitFile$hdr[which(fitFile$hdr == "MJD")+1])
+	fiber <- as.integer(fitFile$hdr[which(fitFile$hdr == "FIBERID")+1])
+	plate <- as.integer(fitFile$hdr[which(fitFile$hdr == "PLATEID")+1])
 	b <- as.numeric(fitFile$hdr[which(fitFile$hdr == "COEFF0")+1])
 	a <- as.numeric(fitFile$hdr[which(fitFile$hdr == "COEFF1")+1])
 	z <- as.numeric(fitFile$hdr[which(fitFile$hdr == "Z")+1])

@@ -4,9 +4,7 @@
 
 
 #' @export
-rParameterization <- function(quasarcl, quasars, feTemplate, 
-							  spectralLines = NULL, continuumWindows = NULL, 
-							  ampWavelength = NULL, feWindows = NULL, fitParameters = NULL) 
+rParameterization <- function(quasarcl, quasars, options) 
 {
 	if(!isInitialized(quasarcl)) 
 	{
@@ -18,30 +16,10 @@ rParameterization <- function(quasarcl, quasars, feTemplate,
 	sizesVector <- getSizesVector(quasars)
 	abz <- getAbzParams(quasars)
 	
-	if (is.null(spectralLines)) 
-	{
-		spectralLines <- loadDefaultSpectralLines()
-	}
-	if (is.null(continuumWindows)) 
-	{
-		continuumWindows <- loadDefaultContinuumWindows()
-	}
-	if (is.null(ampWavelength)) 
-	{
-		ampWavelength <- DEFAULT_AMP_WAVELENGTH
-	}
-	if (is.null(feWindows)) 
-	{
-		feWindows<- loadDefaultFeWindows()
-	}
-	if (is.null(fitParameters)) 
-	{
-		fitParameters <- DEFAULT_FIT_PARAMETERS
-	}
 
 	return (cppParameterization(quasarcl, spectrumsMatrix, errorsMatrix, sizesVector, abz, 
-								spectralLines, continuumWindows, ampWavelength, 
-								feWindows, feTemplate, fitParameters))
+								options$spectralLines, options$continuumWindows, options$ampWavelength, 
+								options$feWindows, options$feTemplate, options$fitParameters))
 }
 
 
@@ -161,3 +139,31 @@ rCalcGaussianFWHM <- function(quasarcl, gaussianParamsVector)
 	return (cppCalcGaussianFWHM(quasarcl, gaussianParamsVector))
 }
 
+
+
+#' @export
+transformResults <- function(results, qParams, spectralLines) {
+	transformedResults <- list();
+	
+	for (i in seq_along(qParams))
+	{
+		elementsFits <- mapply(getFitElement, results$elementsFits, spectralLines, i, SIMPLIFY=FALSE)
+		elementsFits <- elementsFits[!is.na(elementsFits)]
+		
+		transformedResults[[i]] <- list(mjd = qParams[[i]]$mjd, 
+										plate =  qParams[[i]]$plate, 
+										fiber = qParams[[i]]$fiber, 
+										continuumChisq = results$continuumChisqs[[i]], 
+										continuumReglin = results$continuumReglin[[i]], 
+										reglin = results$reglin[[i]], 
+										feScaleRate = results$feScaleRates[[i]], 
+										feWindowsSize = results$feWindowsSizes[[i]], 
+										feWindowsReducedChisq = results$feWindowsReducedChisqs[[i]], 
+										feFullReducedChisq = results$feFullReducedChisqs[[i]],
+										feFullEW = results$feFullEWs[[i]], 
+										feRangeReducedChisq = results$feRangeReducedChisqs[[i]], 
+										feRangeEW = results$feRangeEWs[[i]], 
+										elementsFits = elementsFits)
+	}
+	return(transformedResults)
+}

@@ -44,7 +44,7 @@
 		
 		return Rcpp::List::create(Rcpp::Named("dcontinuumsMatrix") = dcontinuumsMatrix,
 								  Rcpp::Named("continuumsMatrix") = continuumsMatrix,
-								  Rcpp::Named("chisqs") = results.chisqs,
-								  Rcpp::Named("c_reglin_result") = Rcpp::wrap(results.c_reglin_result),
-								  Rcpp::Named("reglin_result") = Rcpp::wrap(results.reglin_result));
+								  Rcpp::Named("continuumChisqs") = results.chisqs,
+								  Rcpp::Named("continuumReglin") = Rcpp::wrap(results.c_reglin_result),
+								  Rcpp::Named("reglin") = Rcpp::wrap(results.reglin_result));
 	}
