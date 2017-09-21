@@ -4,7 +4,7 @@ Title: Pakiet do parametryzacji obiektów astronomicznych
 Version: 1.0
 Date: 2017-09-07
 Author: Dominika Wasak
-Maintainer: dwasak@mion.elka.pw.edu.pl
+Maintainer: <dwasak@mion.elka.pw.edu.pl>
 Description: Pakiet udostępnia funkcje służące do parametryzacji obiektów astronomicznych, a także komunikacji z bazą danych MongoDB.
 License: GPL (>= 2)
 Imports: Rcpp (>= 0.12.7)
