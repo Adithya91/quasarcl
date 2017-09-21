@@ -1,11 +1,11 @@
 Package: quasar
 Type: Package
-Title: Pakiet do parametryzacji obiektów astronomicznych
+Title: Pakiet do parametryzacji obiektow astronomicznych
 Version: 1.0
 Date: 2017-09-07
 Author: Dominika Wasak
-Maintainer: <dwasak@mion.elka.pw.edu.pl>
-Description: Pakiet udostępnia funkcje służące do parametryzacji obiektów astronomicznych, a także komunikacji z bazą danych MongoDB.
+Maintainer: DW <dwasak@mion.elka.pw.edu.pl>
+Description: Pakiet udostepnia funkcje sluzace do parametryzacji obiektow astronomicznych, a takze komunikacji z baza danych MongoDB.
 License: GPL (>= 2)
 Imports: Rcpp (>= 0.12.7)
 Imports: FITSio
