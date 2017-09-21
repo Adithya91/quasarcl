@@ -23,7 +23,6 @@ drawSpectrum <- function(wave, lambda, name)
 }
 
 
-
 drawSpectrumWithPeaksRawData <- function(picturePath, spectrumsMatrix, wavelengthsMatrix, fitElements, qParams, sizes) {
 	for (q in seq(1:length(sizes))) {
 		jpeg(file=paste(picturePath, "widmo_", formatC(q, width=6, flag="0"),".jpg",sep=""),width = 500, height = 500, quality = 55, bg = "white")
