@@ -23,11 +23,12 @@ drawSpectrum <- function(wave, lambda, name)
 }
 
 
+#' @export
 drawSpectrumWithPeaksRawData <- function(picturePath, spectrumsMatrix, wavelengthsMatrix, fitElements, qParams, sizes) {
 	for (q in seq(1:length(sizes))) {
 		jpeg(file=paste(picturePath, "widmo_", formatC(q, width=6, flag="0"),".jpg",sep=""),width = 500, height = 500, quality = 55, bg = "white")
 		lambda <- wavelengthsMatrix[q,][1:sizes[q]]
-		drawSpectrum1(spectrumsMatrix[q,][1:sizes[q]], lambda, qParams[[q]]$name)
+		drawSpectrum(spectrumsMatrix[q,][1:sizes[q]], lambda, qParams[[q]]$name)
 		lapply(fitElements, drawGaussianRawData, q, lambda)
 		dev.off();
 	}
