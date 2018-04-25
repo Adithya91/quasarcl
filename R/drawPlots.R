@@ -33,3 +33,11 @@ drawSpectrumWithPeaksRawData <- function(picturePath, spectrumsMatrix, wavelengt
 		dev.off();
 	}
 }
+
+#' @export
+drawChosenSpectrumWithPeaksRawData <- function(q, spectrumsMatrix, wavelengthsMatrix, fitElements, qParams, sizes) {
+    lambda <- wavelengthsMatrix[q,][1:sizes[q]]
+    drawSpectrum(spectrumsMatrix[q,][1:sizes[q]], lambda, qParams[[q]]$name)
+    lapply(fitElements, drawGaussianRawData, q, lambda)
+}
+
