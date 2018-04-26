@@ -6,6 +6,11 @@ drawGaussianRawData <- function(element, i, lambda)
 	}
 }
 
+#' @export
+plotGaussian <- function(lambda, a, b, c) 
+{
+		plot(lambda, gaussian(lambda, a, b, c), ylim=c(0,a))
+}
 
 
 #' @export
