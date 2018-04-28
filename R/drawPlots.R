@@ -26,14 +26,14 @@ drawGaussian <- function(element, lambda)
 #' @export
 drawSpectrum <- function(wave, lambda, name) 
 {
-	plot(lambda,wave[1:length(lambda)],ylim=c(0, max(wave)*1.1), type='l', lwd=.2,lty=10,main=paste("Widmo kwazaru", name, sep=" "),xlab="dlugosc fali [A]",ylab="widmo [umowne jednostki]");
+	plot(lambda,wave[1:length(lambda)],ylim=c(0, max(wave)*1.1), type='l', lwd=.2,lty=10,main=paste("Widmo kwazaru", name, sep=" "),xlab="wavelength [A]",ylab="flux (arbitrary units)");
 }
 
 
 #' @export
 drawSpectrumWithPeaksRawData <- function(picturePath, spectrumsMatrix, wavelengthsMatrix, fitElements, qParams, sizes) {
 	for (q in seq(1:length(sizes))) {
-		jpeg(file=paste(picturePath, "widmo_", formatC(q, width=6, flag="0"),".jpg",sep=""),width = 500, height = 500, quality = 55, bg = "white")
+		jpeg(file=paste(picturePath, "spectrum_", formatC(q, width=6, flag="0"),".jpg",sep=""),width = 500, height = 500, quality = 55, bg = "white")
 		lambda <- wavelengthsMatrix[q,][1:sizes[q]]
 		drawSpectrum(spectrumsMatrix[q,][1:sizes[q]], lambda, qParams[[q]]$name)
 		lapply(fitElements, drawGaussianRawData, q, lambda)
