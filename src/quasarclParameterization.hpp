@@ -362,7 +362,10 @@ namespace quasarcl {
 				Rcpp::Named("feFullEWs") = feResults.ews_full,
 				Rcpp::Named("feRangeReducedChisqs") = feResults.reducedChisqs_feRange,
 				Rcpp::Named("feRangeEWs") = feResults.ews_feRange,
-				Rcpp::Named("elementsFits") = fitElementsResults);
+				Rcpp::Named("elementsFits") = fitElementsResults,
+				Rcpp::Named("spectrumsMatrix") = spectrumsMatrix,
+				Rcpp::Named("feTemplateMatrix") = feResults.feTemplateMatrix,
+				Rcpp::Named("continuumsMatrix") = continuumsMatrix);
 		return results;
 	}
 	
