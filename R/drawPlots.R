@@ -4,7 +4,7 @@ ASTRO_OBJ_SPEC_SIZE <- 4096
 drawGaussianRawData <- function(element, i, lambda)
 {
   if (element$fitParams[[i]][4] > 0) {
-    lines(lambda, gaussian(lambda, element$fitParams[[i]][1] , element$fitParams[[i]][2], element$fitParams[[i]][3]), ylim=c(0,element$fitParams[[i]][1]))
+    lines(lambda, gaussian(lambda, element$fitParams[[i]][1] , element$fitParams[[i]][2], element$fitParams[[i]][3]), ylim=c(0,element$fitParams[[i]][1]),lwd=2)
   }
 }
 
@@ -26,7 +26,7 @@ drawGaussian <- function(element, lambda)
 #' @export
 drawSpectrum <- function(wave, lambda, name) 
 {
-	plot(lambda,wave[1:length(lambda)],ylim=c(0, max(wave)*1.1), type='l', lwd=.2,lty=10,main=paste("Quasar ", name, sep=" "),xlab="wavelength [A]",ylab="flux (arbitrary units)");
+	plot(lambda,wave[1:length(lambda)],ylim=c(0, max(wave)*1.1), type='l', lwd=.2, lty=5,main=paste("Quasar ", name, sep=" "),xlab="wavelength [A]",ylab="flux (arbitrary units)");
 }
 
 
