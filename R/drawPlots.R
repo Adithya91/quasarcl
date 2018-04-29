@@ -26,7 +26,7 @@ drawGaussian <- function(element, lambda)
 #' @export
 drawSpectrum <- function(wave, lambda, name) 
 {
-	plot(lambda,wave[1:length(lambda)],ylim=c(0, max(wave)*1.1), type='l', lwd=.2, lty=5,main=paste("Quasar ", name, sep=" "),xlab="wavelength [A]",ylab="flux (arbitrary units)");
+	plot(lambda,wave[1:length(lambda)],ylim=c(0, max(wave)*1.1), type='l', lwd=.2, lty=5, col="gray35", main=paste("Quasar ", name, sep=" "),xlab="wavelength [A]",ylab="flux (arbitrary units)");
 }
 
 
