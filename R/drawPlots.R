@@ -3,8 +3,8 @@ ASTRO_OBJ_SPEC_SIZE <- 4096
 #' @export
 drawGaussianRawData <- function(element, i, lambda) 
 {
-	if (element$fitParams[[i]][4] > 0) {
-		lines(lambda, gaussian(lambda, element$fitParams[[i]][1] , element$fitParams[[i]][2], element$fitParams[[i]][3]), ylim=c(0,element$fitParams[[i]][1]))
+	if (element[4] > 0) {
+		lines(lambda, gaussian(lambda, element[1] , element[2], element[3]), ylim=c(0,element[1]))
 	}
 }
 
