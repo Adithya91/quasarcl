@@ -14,6 +14,12 @@ plotGaussian <- function(lambda, a, b, c)
 		plot(lambda, gaussian(lambda, a, b, c), ylim=c(0,a))
 }
 
+#' @export
+lineGaussian <- function(lambda, a, b, c)
+{
+        line(lambda, gaussian(lambda, a, b, c), ylim=c(0,a))
+}
+
 
 #' @export
 drawGaussian <- function(element, lambda) 
