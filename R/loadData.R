@@ -50,8 +50,9 @@ loadQuasarsFromFitFiles <- function(path, from = 1, N = 10000)
 {
 	fitFiles <- list.files(path=path, pattern="\\.fit$", full.names = TRUE)
 	if(length(fitFiles) < from) stop("za mało plików")
-	if(length(fitFiles) < from+N-1) N <- length(fitFiles)-from+1
-	fitFiles <- fitFiles[from:from+N-1]
+	if(length(fitFiles) < (from+N-1)) N <- length(fitFiles)-from+1
+	fitFiles <- fitFiles[from:(from+N-1)]
+	print(paste0("Wczytuję ", N, " kwazarów z fit"));
 	if (identical(fitFiles, character(0))) 
 	{
 		stop("No .fit files found")
