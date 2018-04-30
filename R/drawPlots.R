@@ -1,5 +1,6 @@
 ASTRO_OBJ_SPEC_SIZE <- 4096
 
+
 #' @export
 drawGaussianRawData <- function(element, i, lambda)
 {
@@ -20,38 +21,84 @@ lineGaussian <- function(lambda, a, b, c)
         line(lambda, gaussian(lambda, a, b, c), ylim=c(0,a))
 }
 
-
 #' @export
-drawGaussian <- function(element, lambda) 
+drawGaussian <- function(element, lambda)
 {
-	lines(lambda, gaussian(lambda, element$gaussianParams[1] , element$gaussianParams[2], element$gaussianParams[3], ylim=c(0,element$gaussianParams[1])))
+    lines(lambda, gaussian(lambda, element$gaussianParams[1] , element$gaussianParams[2], element$gaussianParams[3]), ylim=c(0,element$gaussianParams[1]),lwd=2)
 }
 
-
-
 #' @export
-drawSpectrum <- function(wave, lambda, name) 
+drawSpectrum <- function(lambda, spectrum, name)
 {
-	plot(lambda,wave[1:length(lambda)],ylim=c(0, max(wave)*1.1), type='l', lwd=.2, lty=5, col="gray35", main=paste("Quasar ", name, sep=" "),xlab="wavelength [A]",ylab="flux (arbitrary units)");
-}
-
-
-#' @export
-drawSpectrumWithPeaksRawData <- function(picturePath, spectrumsMatrix, wavelengthsMatrix, fitElements, qParams, sizes) {
-	for (q in seq(1:length(sizes))) {
-		jpeg(file=paste(picturePath, "spectrum_", formatC(q, width=6, flag="0"),".jpg",sep=""),width = 500, height = 500, quality = 55, bg = "white")
-		lambda <- wavelengthsMatrix[q,][1:sizes[q]]
-		drawSpectrum(spectrumsMatrix[q,][1:sizes[q]], lambda, qParams[[q]]$name)
-		lapply(fitElements, drawGaussianRawData, q, lambda)
-		dev.off();
-	}
+  plot(lambda,spectrum[1:length(lambda)],ylim=c(0, max(spectrum)*1.1), type='l', lwd=.8, lty=5, col="gray45", main=paste("Quasar ", name, sep=" "),xlab="wavelength [A]",ylab="flux (arbitrary units)");
 }
 
 #' @export
-drawChosenSpectrumWithPeaksRawData <- function(q, spectrumsMatrix, wavelengthsMatrix, fitElements, qParams, sizes) {
-    lambda <- wavelengthsMatrix[q,][1:sizes[q]]
-    drawSpectrum(spectrumsMatrix[q,][1:sizes[q]], lambda, qParams[[q]]$name)
-    invisible(lapply(fitElements, drawGaussianRawData, q, lambda))
+drawSpectrumWithPeaksRawData <- function(picturePath, spectrumsMatrix, wavelengthsMatrix, outputfit, qParams, sizes) {
+  for (q in seq(1:length(sizes))) {
+    jpeg(file=paste(picturePath, "spectrum_", formatC(q, width=6, flag="0"),".jpg",sep=""),width = 500, height = 500, quality = 55, bg = "white")
+    drawSpectrum(spectrumsMatrix[q,][1:sizes[q]], wavelengthsMatrix[q,][1:sizes[q]], qParams[[q]]$name)
+    lapply(outputfit[[q]]$elementsFits, drawGaussian, wavelengthsMatrix[q,][1:sizes[q]])
+    dev.off();
+  }
+}
+
+#' @export
+drawChosenSpectrumWithPeaksRawData <- function(q, spectrumsMatrix, wavelengthsMatrix, outputfit, qParams, sizes) {
+  drawSpectrum(wavelengthsMatrix[q,][1:sizes[q]], spectrumsMatrix[q,][1:sizes[q]], qParams[[q]]$name)
+  invisible(lapply(outputfit[[q]]$elementsFits, drawGaussian, wavelengthsMatrix[q,][1:sizes[q]]))
+}
+
+#' @export
+drawSpectrumWithContinuum <- function(chosen_q, quasars, wavelengthsMatrix, spectrumsMatrix, continuumsMatrix, sizesVector) {
+  spectrumsMatrixORIG <- getSpectrumsMatrix(quasars)
+  qParams<-getParams(quasars)
+  plot(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrixORIG[chosen_q,1:sizesVector[chosen_q]],type = "l",xlab="wavelength [A]",ylab="flux (arbitrary units)",main=qParams[[chosen_q]]$name,ylim=c(0, max(spectrumsMatrix[chosen_q,1:sizesVector[chosen_q]])*1.1),lwd=.1,col="gray60")
+  lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrix[chosen_q,1:sizesVector[chosen_q]])
+  lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],continuumsMatrix[chosen_q,1:sizesVector[chosen_q]],col="gray45")
+}
+
+#' @export
+drawSpectrumWithoutContinuumIron <- function(chosen_q, quasars, wavelengthsMatrix, spectrumsMatrix, continuumsMatrix, feTemplatesMatrix, sizesVector) {
+  spectrumsMatrixORIG <- getSpectrumsMatrix(quasars)
+  spectrumsMatrixNoIron <- rMinusMatrix(ptr, spectrumsMatrix, feTemplatesMatrix)
+  spectrumsMatrixEmissionLines <- rMinusMatrix(ptr, spectrumsMatrixNoIron, continuumsMatrix)
+  qParams<-getParams(quasars)
+  plot(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrixORIG[chosen_q,1:sizesVector[chosen_q]],type = "l",xlab="wavelength [A]",ylab="flux (arbitrary units)",main=qParams[[chosen_q]]$name,ylim=c(0, max(spectrumsMatrix[chosen_q,1:sizesVector[chosen_q]])*1.1),lwd=.1,col="gray60")
+  lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrix[chosen_q,1:sizesVector[chosen_q]])
+  lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],continuumsMatrix[chosen_q,1:sizesVector[chosen_q]],col="gray45")
+  lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],feTemplatesMatrix[chosen_q,1:sizesVector[chosen_q]],lwd=1.5)
+  lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrixEmissionLines[chosen_q,1:sizesVector[chosen_q]],col="gray50",lty=2)
+}
+
+#' @export
+drawChosenPeaksComponents<-function(chosen_q, quasars, wavelengthsMatrix, spectrumsMatrix, continuumsMatrix, feTemplatesMatrix, sizesVector){
+  spectrumsMatrixORIG <- getSpectrumsMatrix(quasars)
+  spectrumsMatrixNoIron <- rMinusMatrix(ptr, spectrumsMatrix, feTemplatesMatrix)
+  spectrumsMatrixEmissionLines <- rMinusMatrix(ptr, spectrumsMatrixNoIron, continuumsMatrix)
+  drawChosenSpectrumWithPeaksRawData(chosen_q, spectrumsMatrixEmissionLines, wavelengthsMatrix, outputfit, getParams(quasars), sizesVector)
+  lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrix[chosen_q,1:sizesVector[chosen_q]],col="gray35")
+  lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],continuumsMatrix[chosen_q,1:sizesVector[chosen_q]],col="gray45")
+  lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],feTemplatesMatrix[chosen_q,1:sizesVector[chosen_q]],col="gray35")
+}
+
+#' @export
+drawAllPeaksComponents2Files<-function(outpath, NSET, quasars, wavelengthsMatrix, spectrumsMatrix, continuumsMatrix, feTemplatesMatrix, sizesVector){
+  spectrumsMatrixORIG <- getSpectrumsMatrix(quasars)
+  spectrumsMatrixNoIron <- rMinusMatrix(ptr, spectrumsMatrix, feTemplatesMatrix)
+  spectrumsMatrixEmissionLines <- rMinusMatrix(ptr, spectrumsMatrixNoIron, continuumsMatrix)
+  qParams <- getParams(quasars)
+  for(chosen_q in NSET){
+    print("Zapisuję do jpg " %&% paste0("spSpec-",qParams[[chosen_q]]$mjd,"-",formatC(qParams[[chosen_q]]$plate, width=4, flag="0"),"-",formatC(qParams[[chosen_q]]$fiber, width=3, flag="0"),".fit")
+    )
+    jpeg(file=paste0(outpath,"quasar-",qParams[[chosen_q]]$mjd,"-",formatC(qParams[[chosen_q]]$plate, width=4, flag="0"),"-",formatC(qParams[[chosen_q]]$fiber, width=3, flag="0"),".jpg"), width = 500, height = 400, quality = 55, bg = "white")
+  drawChosenSpectrumWithPeaksRawData(chosen_q, spectrumsMatrixEmissionLines, wavelengthsMatrix, outputfit, qParams, sizesVector)
+  lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrixORIG[chosen_q,1:sizesVector[chosen_q]],lwd=.1,col="gray35")
+  lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrix[chosen_q,1:sizesVector[chosen_q]])
+  lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],continuumsMatrix[chosen_q,1:sizesVector[chosen_q]],col="gray45")
+  lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],feTemplatesMatrix[chosen_q,1:sizesVector[chosen_q]],col="gray35")
+    dev.off();
+  }
 }
 
 #' @export

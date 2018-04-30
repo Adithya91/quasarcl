@@ -8,7 +8,6 @@ parseFitFile <- function(file)
 	params <- parseHeader(fitFile)
 	values <- parseData(fitFile)
 	error <- parseError(fitFile)
-	cat(".");
 	return (list(params = params, values = values, error = error))
 }
 
