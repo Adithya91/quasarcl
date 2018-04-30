@@ -64,11 +64,10 @@ drawSpectrumWithoutContinuumIron <- function(chosen_q, quasars, wavelengthsMatri
   spectrumsMatrixNoIron <- rMinusMatrix(ptr, spectrumsMatrix, feTemplatesMatrix)
   spectrumsMatrixEmissionLines <- rMinusMatrix(ptr, spectrumsMatrixNoIron, continuumsMatrix)
   qParams<-getParams(quasars)
-  plot(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrixORIG[chosen_q,1:sizesVector[chosen_q]],type = "l",xlab="wavelength [A]",ylab="flux (arbitrary units)",main=qParams[[chosen_q]]$name,ylim=c(0, max(spectrumsMatrix[chosen_q,1:sizesVector[chosen_q]])*1.1),lwd=.1,col="gray60")
-  lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrix[chosen_q,1:sizesVector[chosen_q]])
-  lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],continuumsMatrix[chosen_q,1:sizesVector[chosen_q]],col="gray45")
+  plot(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrix[chosen_q,1:sizesVector[chosen_q]],type = "l",xlab="wavelength [A]",ylab="flux (arbitrary units)",main=qParams[[chosen_q]]$name,ylim=c(0, max(spectrumsMatrix[chosen_q,1:sizesVector[chosen_q]])*1.1),lwd=0.5)
+  lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],continuumsMatrix[chosen_q,1:sizesVector[chosen_q]])
   lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],feTemplatesMatrix[chosen_q,1:sizesVector[chosen_q]],lwd=1.5)
-  lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrixEmissionLines[chosen_q,1:sizesVector[chosen_q]],col="gray50",lty=2)
+  lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrixEmissionLines[chosen_q,1:sizesVector[chosen_q]],col="gray45",lty=2)
 }
 
 #' @export
