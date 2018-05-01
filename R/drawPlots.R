@@ -30,14 +30,14 @@ drawGaussian <- function(element, lambda)
 #' @export
 drawSpectrum <- function(lambda, spectrum, name)
 {
-  plot(lambda,spectrum[1:length(lambda)],ylim=c(0, max(spectrum)*1.1), type='l', lwd=.8, lty=5, col="gray45", main=paste("Quasar ", name, sep=" "),xlab="wavelength [A]",ylab="flux (arbitrary units)");
+  plot(lambda,spectrum[1:length(lambda)],ylim=c(0, max(spectrum)*1.1), type='l', lwd=.8, lty=5, col="gray45", main=paste0("SDSS J",substr(qParams[[chosen_q]]$name,5,22)),xlab="wavelength [A]",ylab="flux (arbitrary units)");
 }
 
 #' @export
 drawSpectrumWithPeaksRawData <- function(picturePath, spectrumsMatrix, wavelengthsMatrix, outputfit, qParams, sizes) {
   for (q in seq(1:length(sizes))) {
     jpeg(file=paste(picturePath, "spectrum_", formatC(q, width=6, flag="0"),".jpg",sep=""),width = 500, height = 500, quality = 55, bg = "white")
-    drawSpectrum(spectrumsMatrix[q,][1:sizes[q]], wavelengthsMatrix[q,][1:sizes[q]], qParams[[q]]$name)
+    drawSpectrum(spectrumsMatrix[q,][1:sizes[q]], wavelengthsMatrix[q,][1:sizes[q]], paste0("SDSS J",substr(qParams[[q]]$name,5,22)))
     lapply(outputfit[[q]]$elementsFits, drawGaussian, wavelengthsMatrix[q,][1:sizes[q]])
     dev.off();
   }
@@ -45,7 +45,7 @@ drawSpectrumWithPeaksRawData <- function(picturePath, spectrumsMatrix, wavelengt
 
 #' @export
 drawChosenSpectrumWithPeaksRawData <- function(q, spectrumsMatrix, wavelengthsMatrix, outputfit, qParams, sizes) {
-  drawSpectrum(wavelengthsMatrix[q,][1:sizes[q]], spectrumsMatrix[q,][1:sizes[q]], qParams[[q]]$name)
+  drawSpectrum(wavelengthsMatrix[q,][1:sizes[q]], spectrumsMatrix[q,][1:sizes[q]], paste0("SDSS J",substr(qParams[[q]]$name,5,22)))
   invisible(lapply(outputfit[[q]]$elementsFits, drawGaussian, wavelengthsMatrix[q,][1:sizes[q]]))
 }
 
@@ -53,7 +53,7 @@ drawChosenSpectrumWithPeaksRawData <- function(q, spectrumsMatrix, wavelengthsMa
 drawSpectrumWithContinuum <- function(chosen_q, quasars, wavelengthsMatrix, spectrumsMatrix, continuumsMatrix, sizesVector) {
   spectrumsMatrixORIG <- getSpectrumsMatrix(quasars)
   qParams<-getParams(quasars)
-  plot(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrixORIG[chosen_q,1:sizesVector[chosen_q]],type = "l",xlab="wavelength [A]",ylab="flux (arbitrary units)",main=qParams[[chosen_q]]$name,ylim=c(0, max(spectrumsMatrix[chosen_q,1:sizesVector[chosen_q]])*1.1),lwd=.1,col="gray60")
+  plot(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrixORIG[chosen_q,1:sizesVector[chosen_q]],type = "l",xlab="wavelength [A]",ylab="flux (arbitrary units)",main=paste0("SDSS J",substr(qParams[[chosen_q]]$name,5,22)),ylim=c(0, max(spectrumsMatrix[chosen_q,1:sizesVector[chosen_q]])*1.1),lwd=.1,col="gray60")
   lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrix[chosen_q,1:sizesVector[chosen_q]])
   lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],continuumsMatrix[chosen_q,1:sizesVector[chosen_q]],col="gray45")
 }
@@ -64,7 +64,7 @@ drawSpectrumWithoutContinuumIron <- function(chosen_q, quasars, wavelengthsMatri
   spectrumsMatrixNoIron <- rMinusMatrix(ptr, spectrumsMatrix, feTemplatesMatrix)
   spectrumsMatrixEmissionLines <- rMinusMatrix(ptr, spectrumsMatrixNoIron, continuumsMatrix)
   qParams<-getParams(quasars)
-  plot(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrix[chosen_q,1:sizesVector[chosen_q]],type = "l",xlab="wavelength [A]",ylab="flux (arbitrary units)",main=qParams[[chosen_q]]$name,ylim=c(0, max(spectrumsMatrix[chosen_q,1:sizesVector[chosen_q]])*1.1),lwd=0.5)
+  plot(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrix[chosen_q,1:sizesVector[chosen_q]],type = "l",xlab="wavelength [A]",ylab="flux (arbitrary units)",main=paste0("SDSS J",substr(qParams[[chosen_q]]$name,5,22)),ylim=c(0, max(spectrumsMatrix[chosen_q,1:sizesVector[chosen_q]])*1.1),lwd=0.5)
   lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],continuumsMatrix[chosen_q,1:sizesVector[chosen_q]])
   lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],feTemplatesMatrix[chosen_q,1:sizesVector[chosen_q]],lwd=1.5)
   lines(wavelengthsMatrix[chosen_q,1:sizesVector[chosen_q]],spectrumsMatrixEmissionLines[chosen_q,1:sizesVector[chosen_q]],col="gray45",lty=2)
