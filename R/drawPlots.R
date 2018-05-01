@@ -30,7 +30,7 @@ drawGaussian <- function(element, lambda)
 #' @export
 drawSpectrum <- function(lambda, spectrum, name)
 {
-  plot(lambda,spectrum[1:length(lambda)],ylim=c(0, max(spectrum)*1.1), type='l', lwd=.8, lty=5, col="gray45", main=paste0("SDSS J",substr(qParams[[chosen_q]]$name,5,22)),xlab="wavelength [A]",ylab="flux (arbitrary units)");
+  plot(lambda,spectrum[1:length(lambda)],ylim=c(0, max(spectrum)*1.1), type='l', lwd=.8, lty=5, col="gray45", main=paste0("SDSS J",substr(name,5,22)),xlab="wavelength [A]",ylab="flux (arbitrary units)");
 }
 
 #' @export
