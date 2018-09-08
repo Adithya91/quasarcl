@@ -1,3 +1,13 @@
+#if __OPENCL_VERSION__ < 120
+  #if cl_khr_fp64
+     #pragma OPENCL EXTENSION cl_khr_fp64 : enable
+  #elif cl_amd_fp64
+     #pragma OPENCL EXTENSION cl_amd_fp64 : enable
+  #else
+     #error Missing double precision extension
+  #endif
+#endif
+
 __kernel void convolve
 	(
 		__global double * input,    // Macierz
@@ -145,7 +155,6 @@ __kernel void countIfNotInf
 	result[gid] = count;
 }
 
-// 
 /*
 #if defined(cl_khr_fp64)
 	#pragma OPENCL EXTENSION cl_khr_fp64 : enable
@@ -160,6 +169,7 @@ __kernel void countIfNotInf
 	typedef double4 real4_t;
 #endif
 */
+
 //
 // Oblicza współczynniki prostej regresjii.
 //
@@ -191,11 +201,7 @@ __kernel void reglin
 	real_t y_sum = 0;
 	real_t xy_sum = 0;
 	
-#if defined(cl_khr_fp64)
 	real_t n = convert_double(col_height);
-#else
-	real_t n = convert_double(col_height);
-#endif
 
 	{
 		real4_t c = (real4_t)(0.0f, 0.0f, 0.0f, 0.0f);
@@ -314,11 +320,9 @@ __kernel void reglin_yax
 	results[gid] = (double)(r);
 }
 
-/*
-#if defined(cl_khr_fp64)
-	#pragma OPENCL EXTENSION cl_khr_fp64 : disable
-#endif
-*/
+//#if defined(cl_khr_fp64)
+//	#pragma OPENCL EXTENSION cl_khr_fp64 : disable
+//#endif
 
 // Oblicza chisq między odpowiadającymi sobie kolumnami
 // z macierzy fs i ys.

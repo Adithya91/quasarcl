@@ -1,4 +1,13 @@
-#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+#if __OPENCL_VERSION__ < 120
+  #if cl_khr_fp64
+     #pragma OPENCL EXTENSION cl_khr_fp64 : enable
+  #elif cl_amd_fp64
+     #pragma OPENCL EXTENSION cl_amd_fp64 : enable
+  #else
+     #error Missing double precision extension
+  #endif
+#endif
+
 
 #define ASTRO_OBJ_SPEC_SIZE 4096
 

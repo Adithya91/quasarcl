@@ -1,19 +1,17 @@
+#if __OPENCL_VERSION__ < 120
+  #if cl_khr_fp64
+     #pragma OPENCL EXTENSION cl_khr_fp64 : enable
+  #elif cl_amd_fp64
+     #pragma OPENCL EXTENSION cl_amd_fp64 : enable
+  #else
+     #error Missing double precision extension
+  #endif
+#endif
 
-// 
-//#if defined(cl_khr_fp64)
-	#pragma OPENCL EXTENSION cl_khr_fp64 : enable
-	// double
-	typedef double real_t;
-	typedef double2 real2_t;
-	typedef double4 real4_t;
-	#define REAL_MIN DBL_MIN
-//#else
-	// double
-//	typedef float real_t;
-//	typedef float2 real2_t;
-//	typedef float4 real4_t;
-//	#define REAL_MIN FLT_MIN
-//#endif
+typedef double real_t;
+typedef double2 real2_t;
+typedef double4 real4_t;
+#define REAL_MIN DBL_MIN
 
 real_t max_in_vector(real4_t vector)
 {

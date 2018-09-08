@@ -2,6 +2,8 @@
 #define CONVERT_H_
 
 #include <RcppCommon.h>
+#include <CL/cl.h>
+#undef CL_VERSION_1_2
 #include <CL/cl.hpp>
 
 namespace Rcpp 
