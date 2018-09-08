@@ -59,7 +59,7 @@ void QuasarCL::initialize(std::vector<std::string>& sourceFilenames) {
 		this->program = cl::Program(context, sources, &err);
 		std::cout << "Error: " << err << std::endl;
 		try{
-			this->program.build(devices);
+			this->program.build(devices,CL_STD);
 		}
 		catch(const cl::Error &e) {
 		 if (e.err() == CL_BUILD_PROGRAM_FAILURE)
