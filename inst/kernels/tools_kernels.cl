@@ -146,6 +146,7 @@ __kernel void countIfNotInf
 }
 
 // 
+/*
 #if defined(cl_khr_fp64)
 	#pragma OPENCL EXTENSION cl_khr_fp64 : enable
 	// double
@@ -158,7 +159,7 @@ __kernel void countIfNotInf
 	typedef double2 real2_t;
 	typedef double4 real4_t;
 #endif
-
+*/
 //
 // Oblicza współczynniki prostej regresjii.
 //
@@ -313,9 +314,11 @@ __kernel void reglin_yax
 	results[gid] = (double)(r);
 }
 
+/*
 #if defined(cl_khr_fp64)
 	#pragma OPENCL EXTENSION cl_khr_fp64 : disable
 #endif
+*/
 
 // Oblicza chisq między odpowiadającymi sobie kolumnami
 // z macierzy fs i ys.
