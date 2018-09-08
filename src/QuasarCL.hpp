@@ -7,7 +7,6 @@
 #define __CL_ENABLE_EXCEPTIONS
 #endif
 
-#include <CL/cl.h>
 #undef CL_VERSION_1_2
 #include <CL/cl.hpp>
 #include <map>
