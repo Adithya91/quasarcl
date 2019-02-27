@@ -8,7 +8,6 @@ Maintainer: DW <dwasak@mion.elka.pw.edu.pl>
 Description: Pakiet udostepnia funkcje sluzace do parametryzacji obiektow astronomicznych, a takze komunikacji z baza danych MongoDB.
 License: GPL (>= 2)
 Imports: Rcpp (>= 0.12.7)
-Imports: FITSio
 LinkingTo: Rcpp
 SystemRequirements: C++11
 RoxygenNote: 6.0.0
